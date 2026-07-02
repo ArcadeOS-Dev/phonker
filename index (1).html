@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GradeSight Pro — Greenwood High</title>
+<!-- FONTS: Outfit (body) + Space Mono (mono) -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ─── DESIGN TOKENS ─── */
+:root {
+  --bg:#0a0b0f;--bg2:#111318;--bg3:#1a1d24;--bg4:#22262f;
+  --border:#2a2e3a;--border2:#343a48;
+  --text:#e8eaf0;--text2:#9ba3b8;--text3:#5a6175;
+  --accent:#4f8ef7;--accent2:#7c5cfc;--accent3:#f7924f;
+  --green:#3ecf8e;--red:#f75f5f;--yellow:#f7c94f;
+  --card:#13161e;--card2:#181c26;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);--shadow2:0 8px 48px rgba(0,0,0,0.6);
+  --radius:16px;--radius2:12px;--radius3:8px;
+  --font:'Outfit',sans-serif;--font-display:'Outfit',sans-serif;--font-mono:'Space Mono',monospace;
+  --transition:0.22s cubic-bezier(0.4,0,0.2,1);
+}
+[data-theme="light"]{
+  --bg:#f0f2f8;--bg2:#e8ebf4;--bg3:#dde1ef;--bg4:#d0d5e8;
+  --border:#c8cde0;--border2:#b8bed6;
+  --text:#181c2c;--text2:#4a5068;--text3:#8890a8;
+  --card:#ffffff;--card2:#f5f7ff;
+  --shadow:0 4px 24px rgba(0,0,0,0.08);--shadow2:0 8px 48px rgba(0,0,0,0.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background var(--transition),color var(--transition)}
+/* ─── DISPLAY FONT (Outfit) on headings & numbers ─── */
+.verify-title,.reg-title,.dash-greeting,.section-title,.stat-value,
+.modal-title,.sidebar-logo-text,.countdown-val,.calc-result,
+.about-section-title,.dev-name,.topbar-title,.site-link-name,
+.tt-grid-table th,.cal-month-title,#cal-month-label{font-family:var(--font-display)}
+.topbar-title{letter-spacing:0.5px}
+.dash-greeting{letter-spacing:-0.5px}
+.stat-value{letter-spacing:-1px}
+.verify-title{letter-spacing:-0.5px}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes ripple{0%{transform:scale(0);opacity:0.5}100%{transform:scale(4);opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes secpulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.anim-fadeup{animation:fadeUp 0.5s ease both}
+.anim-fadein{animation:fadeIn 0.4s ease both}
+.anim-scalein{animation:scaleIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both}
+
+/* ─── PAGES ─── */
+.page{display:none;min-height:100vh}
+.page.active{display:flex;flex-direction:column}
+
+/* ─── BUTTONS ─── */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:var(--radius3);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;outline:none;transition:all var(--transition);position:relative;overflow:hidden;text-decoration:none;white-space:nowrap}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#3a7de8;transform:translateY(-1px);box-shadow:0 4px 16px rgba(79,142,247,0.4)}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--bg4);border-color:var(--border2)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg3);color:var(--text)}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{background:#e54a4a}
+.btn-success{background:var(--green);color:#0a0b0f}.btn-success:hover{background:#32b87a}
+.btn-accent2{background:var(--accent2);color:#fff}.btn-accent2:hover{background:#6a4af0}
+.btn-sm{padding:7px 14px;font-size:13px}
+.btn-lg{padding:14px 28px;font-size:15px;border-radius:var(--radius2)}
+.btn-icon{padding:8px;border-radius:50%;width:36px;height:36px;justify-content:center}
+
+/* ─── INPUTS ─── */
+.input{width:100%;padding:11px 14px;background:var(--bg3);border:1.5px solid var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;border-radius:var(--radius3);outline:none;transition:all var(--transition)}
+.input:focus{border-color:var(--accent);background:var(--bg2);box-shadow:0 0 0 3px rgba(79,142,247,0.15)}
+.input::placeholder{color:var(--text3)}
+.input-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.label{font-size:13px;font-weight:500;color:var(--text2)}
+select.input{cursor:pointer}
+select.input option{background:var(--bg3);color:var(--text)}
+
+/* ─── CARDS ─── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);transition:all var(--transition)}
+.card:hover{border-color:var(--border2);box-shadow:var(--shadow2)}
+.card2{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius2);padding:16px}
+
+/* ─── MODAL ─── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--transition);padding:20px}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;width:100%;max-width:560px;transform:scale(0.92) translateY(20px);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1),opacity 0.3s ease;opacity:0;max-height:92vh;overflow-y:auto}
+.modal-overlay.open .modal{transform:scale(1) translateY(0);opacity:1}
+.modal-title{font-size:20px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+
+/* ─── TABS ─── */
+.tabs{display:flex;gap:4px;background:var(--bg3);padding:4px;border-radius:var(--radius2);margin-bottom:20px}
+.tab{flex:1;padding:9px 14px;border-radius:var(--radius3);font-size:13px;font-weight:600;cursor:pointer;text-align:center;color:var(--text2);transition:all var(--transition);border:none;background:none;font-family:'Outfit',sans-serif}
+.tab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(79,142,247,0.4)}
+.tab:hover:not(.active){background:var(--bg4);color:var(--text)}
+
+/* ─── BADGE ─── */
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;background:var(--bg3);color:var(--text2)}
+.badge-accent{background:rgba(79,142,247,0.15);color:var(--accent)}
+.badge-green{background:rgba(62,207,142,0.15);color:var(--green)}
+.badge-red{background:rgba(247,95,95,0.15);color:var(--red)}
+.badge-yellow{background:rgba(247,201,79,0.15);color:var(--yellow)}
+
+/* ─── THEME TOGGLE ─── */
+.theme-toggle{width:48px;height:26px;background:var(--bg3);border:1.5px solid var(--border);border-radius:13px;cursor:pointer;position:relative;transition:all var(--transition)}
+.theme-toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--accent);transition:transform var(--transition)}
+[data-theme="light"] .theme-toggle::after{transform:translateX(22px)}
+
+/* ─── TOAST ─── */
+#toast-container{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--radius2);background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow2);min-width:280px;max-width:380px;animation:fadeUp 0.3s ease both;color:var(--text);font-size:14px}
+.toast.success .toast-icon{color:var(--green)}
+.toast.error .toast-icon{color:var(--red)}
+.toast.info .toast-icon{color:var(--accent)}
+.toast.warning .toast-icon{color:var(--yellow)}
+
+/* ─── DIVIDER ─── */
+.divider{height:1px;background:var(--border);margin:16px 0}
+
+/* ─── VERIFY PAGE ─── */
+#page-verify{background:var(--bg);align-items:center;justify-content:center;position:relative;overflow:hidden}
+.verify-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 30%,rgba(79,142,247,0.12) 0%,transparent 60%),radial-gradient(ellipse at 80% 70%,rgba(124,92,252,0.10) 0%,transparent 60%)}
+.verify-grid{position:absolute;inset:0;opacity:0.04;background-image:linear-gradient(var(--accent) 1px,transparent 1px),linear-gradient(90deg,var(--accent) 1px,transparent 1px);background-size:48px 48px}
+.verify-card{position:relative;z-index:1;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:48px 56px;width:100%;max-width:480px;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.5);animation:scaleIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both}
+.verify-logo{width:80px;height:80px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.verify-logo svg{width:80px;height:80px;animation:float 3s ease-in-out infinite}
+.verify-title{font-size:26px;font-weight:800;margin-bottom:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.verify-sub{font-size:14px;color:var(--text2);margin-bottom:32px;line-height:1.5}
+.verify-school{font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px}
+.verify-actions{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.verify-not-staff{margin-top:20px;padding-top:20px;border-top:1px solid var(--border);font-size:13px;color:var(--text3)}
+.verify-denied{display:none;flex-direction:column;align-items:center;gap:16px;padding:24px 0}
+.verify-denied svg{width:64px;height:64px;color:var(--red)}
+
+/* ─── REGISTRATION MODAL (all-in-one) ─── */
+#reg-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+#reg-modal-overlay.open{display:flex;animation:fadeIn 0.25s ease}
+#reg-modal{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:38px;width:100%;max-width:580px;animation:scaleIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.6)}
+.reg-title{font-size:22px;font-weight:800;margin-bottom:4px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.reg-sub{font-size:13px;color:var(--text2);margin-bottom:24px}
+/* Tags input in reg modal */
+.tags-input-wrap{display:flex;flex-wrap:wrap;gap:6px;background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--radius3);padding:8px 10px;min-height:46px;cursor:text;transition:border-color var(--transition)}
+.tags-input-wrap:focus-within{border-color:var(--accent);background:var(--bg2);box-shadow:0 0 0 3px rgba(79,142,247,0.15)}
+.tag-item{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;padding:3px 10px;border-radius:20px;font-size:13px}
+.tag-remove{cursor:pointer;opacity:0.7;transition:opacity 0.2s;font-size:16px;line-height:1}.tag-remove:hover{opacity:1}
+.tags-input{border:none;outline:none;background:transparent;color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;flex:1;min-width:120px}
+
+/* ─── MAIN LAYOUT ─── */
+#page-main{flex-direction:row;min-height:100vh;display:none}
+#page-main.active{display:flex}
+
+/* ─── SIDEBAR ─── */
+.sidebar{width:240px;min-height:100vh;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;transition:transform var(--transition)}
+.sidebar-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sidebar-logo-text{font-size:16px;font-weight:800;line-height:1}
+.sidebar-logo-sub{font-size:10px;color:var(--text3);font-weight:400}
+.sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.nav-section{margin-bottom:20px}
+.nav-section-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;padding:0 10px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:var(--radius3);cursor:pointer;color:var(--text2);font-size:14px;font-weight:500;transition:all var(--transition);margin-bottom:2px;border:none;background:none;width:100%;text-align:left;font-family:'Outfit',sans-serif}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:rgba(79,142,247,0.12);color:var(--accent)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.sidebar-bottom{padding:12px;border-top:1px solid var(--border)}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:10px;border-radius:var(--radius2);background:var(--bg3)}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:13px;font-weight:600;line-height:1.2}
+.user-role{font-size:11px;color:var(--text3)}
+
+/* ─── TOPBAR ─── */
+.topbar{height:64px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;position:fixed;top:0;left:240px;right:0;z-index:90}
+.topbar-title{font-size:18px;font-weight:700;flex:1}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.mobile-menu-btn{display:none;background:none;border:none;color:var(--text);cursor:pointer;padding:4px}
+@media(max-width:768px){.mobile-menu-btn{display:flex}.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.topbar{left:0}.main-content{margin-left:0}.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.verify-card{padding:32px 24px}}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99}
+@media(max-width:768px){.sidebar-overlay.show{display:block}}
+
+/* ─── CONTENT ─── */
+.main-content{margin-left:240px;padding-top:64px;min-height:100vh;flex:1}
+.content-section{display:none;padding:28px;animation:fadeUp 0.4s ease both}
+.content-section.active{display:block}
+.grid{display:grid;gap:20px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+
+/* ─── STAT CARDS ─── */
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:all var(--transition);position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(79,142,247,0.1) 0%,transparent 70%);transform:translate(30%,-30%)}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow2)}
+.stat-label{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
+.stat-value{font-size:28px;font-weight:800;margin-bottom:4px}
+.stat-sub{font-size:12px;color:var(--text2)}
+
+/* ─── DASHBOARD ─── */
+/* Merged greeting into stats bar */
+.dash-header{margin-bottom:24px}
+.dash-name-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px}
+.dash-greeting{font-size:32px;font-weight:800;background:linear-gradient(135deg,var(--text) 0%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.dash-sub{font-size:14px;color:var(--text2);margin-bottom:8px}
+.dash-chips-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:500}
+
+/* countdown card */
+.countdown-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.countdown-card h4{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px}
+.countdown-event-name{font-size:15px;font-weight:700;margin-bottom:10px;color:var(--text)}
+.countdown-timer{display:flex;gap:10px;flex-wrap:wrap}
+.countdown-unit{text-align:center;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius3);padding:10px 14px;min-width:58px}
+.countdown-val{font-size:26px;font-weight:800;color:var(--accent);line-height:1;font-family:var(--font-mono)}
+.countdown-label{font-size:10px;color:var(--text3);text-transform:uppercase;margin-top:4px}
+
+/* ─── TIMETABLE ─── */
+.timetable-builder{overflow-x:auto}
+/* Color-coded period blocks — visible in both themes */
+.tt-palette-item{padding:6px 12px;border-radius:6px;font-size:13px;font-weight:600;cursor:grab;transition:all 0.15s;user-select:none}
+.tt-palette-item:hover{transform:scale(1.05)}
+.tt-block-in-cell{width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:12px;font-weight:700;padding:6px;cursor:grab;text-align:center;line-height:1.3}
+.tt-drop-zone{min-height:52px;border:2px dashed transparent;border-radius:6px;transition:all 0.15s;display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.tt-drop-zone.drag-over{border-color:var(--accent);background:rgba(79,142,247,0.08)}
+
+/* Timetable grid */
+.tt-grid-table{width:100%;border-collapse:collapse;min-width:700px}
+.tt-grid-table th{padding:8px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;background:var(--bg3);border:1px solid var(--border);min-width:80px}
+.tt-grid-table td{width:auto;height:60px;border:1px solid var(--border);padding:0;vertical-align:middle;position:relative}
+.tt-day-th{min-width:80px;font-size:13px;color:var(--text);font-weight:600}
+/* view blocks */
+.tt-view-block{border-radius:6px;padding:5px;font-size:11px;font-weight:700;text-align:center;width:90%;margin:auto;line-height:1.3}
+
+/* ─── CALENDAR ─── */
+/* Full-width, auto-fit */
+.calendar-wrap{width:100%}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;width:100%}
+.cal-header-row{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;width:100%}
+.cal-day-name{text-align:center;font-size:11px;font-weight:600;color:var(--text3);padding:8px 0;text-transform:uppercase}
+.cal-day{aspect-ratio:1;border-radius:var(--radius3);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border:1px solid transparent;transition:all var(--transition);font-size:14px;position:relative;gap:2px;padding:4px;min-height:40px}
+.cal-day:hover{background:var(--bg3);border-color:var(--border)}
+.cal-day.today{background:rgba(79,142,247,0.15);border-color:var(--accent);color:var(--accent)}
+.cal-day.has-events::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent3)}
+.cal-day.other-month{opacity:0.3}
+.cal-day-num{font-weight:600;line-height:1}
+
+/* Events expandable (top of calendar tab) */
+.events-top-bar{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px}
+.events-top-bar-header{display:flex;align-items:center;justify-content:space-between}
+.events-top-bar-title{font-size:15px;font-weight:700}
+.events-collapse-body{max-height:0;overflow:hidden;transition:max-height 0.4s cubic-bezier(0.4,0,0.2,1)}
+.events-collapse-body.open{max-height:600px}
+
+/* ─── STUDENTS TABLE ─── */
+.students-tabs{display:flex;gap:4px;background:var(--bg3);padding:4px;border-radius:var(--radius2);margin-bottom:20px;flex-wrap:wrap}
+.student-table-wrap{overflow-x:auto}
+table.marks-table{width:100%;border-collapse:collapse;font-size:13px}
+table.marks-table th{padding:10px 12px;background:var(--bg3);text-align:left;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid var(--border);white-space:nowrap}
+table.marks-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+table.marks-table tr:hover td{background:var(--bg3)}
+table.marks-table .marks-input{width:52px;padding:5px 8px;font-size:13px;text-align:center;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:6px;outline:none;font-family:var(--font-mono)}
+table.marks-table .marks-input:focus{border-color:var(--accent);background:var(--bg2)}
+.pct-badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.pct-high{background:rgba(62,207,142,0.15);color:var(--green)}
+.pct-mid{background:rgba(79,142,247,0.15);color:var(--accent)}
+.pct-low{background:rgba(247,95,95,0.15);color:var(--red)}
+
+/* ─── CALCULATOR ─── */
+.calc-wrap{max-width:400px}
+.calc-display{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius2);padding:16px 20px;margin-bottom:12px;text-align:right;min-height:80px}
+.calc-expr{font-size:13px;color:var(--text3);font-family:var(--font-mono);min-height:20px;word-break:break-all}
+.calc-result{font-family:var(--font-mono);font-size:32px;font-weight:700;line-height:1.2;word-break:break-all}
+.calc-keys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.calc-key{padding:16px 8px;border-radius:var(--radius3);font-family:var(--font-mono);font-size:15px;font-weight:500;cursor:pointer;border:none;transition:all var(--transition);background:var(--bg3);color:var(--text);outline:none}
+.calc-key:hover{background:var(--bg4);transform:translateY(-1px)}
+.calc-key:active{transform:scale(0.95)}
+.calc-key.op{background:rgba(79,142,247,0.15);color:var(--accent)}
+.calc-key.op:hover{background:rgba(79,142,247,0.25)}
+.calc-key.eq{background:var(--accent);color:#fff;grid-column:span 2}
+.calc-key.eq:hover{background:#3a7de8}
+.calc-key.clear{background:rgba(247,95,95,0.15);color:var(--red)}
+.calc-key.clear:hover{background:rgba(247,95,95,0.25)}
+.calc-key.zero{grid-column:span 2}
+.progress-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.5s cubic-bezier(0.4,0,0.2,1)}
+
+/* ─── NOTIFICATION ─── */
+.notif-bubble{position:fixed;top:80px;right:20px;z-index:999;background:var(--card);border:1px solid var(--accent);border-radius:var(--radius2);padding:14px 18px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 8px 32px rgba(79,142,247,0.2);max-width:340px;animation:fadeUp 0.4s ease both;cursor:pointer}
+
+/* ─── CROWN ─── */
+.crown-note{background:rgba(247,201,79,0.1);border:1px solid rgba(247,201,79,0.3);border-radius:var(--radius3);padding:10px 14px;font-size:13px;color:var(--yellow);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* ─── SECTION HEADER ─── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.section-title{font-size:22px;font-weight:700}
+.section-sub{font-size:14px;color:var(--text2);margin-top:2px}
+
+/* ─── EMPTY STATE ─── */
+.empty-state{text-align:center;padding:48px 24px;color:var(--text3)}
+.empty-state svg{width:64px;height:64px;margin:0 auto 16px;opacity:0.3}
+.empty-state h3{font-size:16px;font-weight:600;color:var(--text2);margin-bottom:6px}
+.empty-state p{font-size:14px}
+
+/* ─── ABOUT ─── */
+.about-hero{text-align:center;padding:48px 24px;background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:var(--radius);margin-bottom:24px;position:relative;overflow:hidden}
+.about-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(79,142,247,0.1) 0%,transparent 60%)}
+.about-logo-big{width:80px;height:80px;margin:0 auto 16px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 8px 32px rgba(79,142,247,0.3)}
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.feature-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:20px;text-align:center;transition:all var(--transition)}
+.feature-item:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 24px rgba(79,142,247,0.15)}
+.feature-icon{font-size:28px;margin-bottom:10px}
+.feature-name{font-weight:600;font-size:14px;margin-bottom:4px}
+.feature-desc{font-size:12px;color:var(--text3)}
+/* About sections YapStudy-style */
+.about-section-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px}
+.about-section-title{font-size:18px;font-weight:800;margin-bottom:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.dev-block{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.dev-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.dev-name{font-size:20px;font-weight:800;margin-bottom:4px}
+.dev-info{font-size:14px;color:var(--text2);line-height:1.7}
+.dev-socials{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.dev-social{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;background:var(--bg3);border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text2);text-decoration:none;transition:all var(--transition)}
+.dev-social:hover{border-color:var(--accent);color:var(--accent)}
+.links-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:12px}
+.site-link{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;background:var(--card2);border:1px solid var(--border);text-decoration:none;color:var(--text);transition:all var(--transition)}
+.site-link:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+.site-link-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.site-link-name{font-size:14px;font-weight:700}
+.site-link-sub{font-size:11px;color:var(--text3)}
+
+/* ─── OUTLOOK WEEK VIEW ─── */
+.outlook-day-header-cell{padding:10px 8px;text-align:center;border-right:1px solid var(--border);font-size:12px;font-weight:600;position:sticky;top:0;background:var(--card);z-index:2;flex:1}
+.outlook-day-header-cell:first-child{width:64px;flex:none;border-right:1px solid var(--border)}
+.outlook-day-num{font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1;display:block;margin-bottom:2px}
+.outlook-day-num.is-today{width:36px;height:36px;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 2px;font-size:16px}
+.outlook-day-name{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text2)}
+.outlook-day-name.is-today{color:var(--accent);font-weight:700}
+.outlook-time-label{height:48px;display:flex;align-items:flex-start;padding:3px 8px 0 0;font-size:10px;color:var(--text3);font-family:var(--font-mono);border-bottom:1px solid transparent;box-sizing:border-box}
+.outlook-hour-row{height:48px;border-bottom:1px solid var(--border);position:center;box-sizing:border-box}
+.outlook-half-mark{position:absolute;top:24px;left:0;right:0;border-top:1px dashed rgba(255,255,255,0.06)}
+[data-theme="light"] .outlook-half-mark{border-top:1px dashed rgba(0,0,0,0.07)}
+.outlook-event-pill{position:absolute;left:3px;right:3px;border-radius:5px;padding:3px 7px;font-size:11px;overflow:hidden;cursor:pointer;z-index:4;transition:filter 0.15s,box-shadow 0.15s;min-height:22px}
+.outlook-event-pill:hover{filter:brightness(1.18);box-shadow:0 2px 12px rgba(0,0,0,0.3)}
+.outlook-event-pill .ep-title{font-weight:700;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.outlook-event-pill .ep-time{font-size:9px;opacity:0.75;line-height:1.3}
+.outlook-now-bar{position:absolute;left:0;right:0;z-index:5;pointer-events:none}
+.outlook-now-bar::before{content:'';position:absolute;left:0;top:-5px;width:10px;height:10px;border-radius:50%;background:var(--red)}
+.outlook-now-bar-line{position:absolute;left:10px;right:0;top:-1px;height:2px;background:var(--red)}
+
+/* ─── ALARM MODAL ─── */
+#alarm-overlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.93);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+#alarm-overlay.show{display:flex;animation:fadeIn 0.5s ease}
+.alarm-modal{text-align:center;padding:60px 48px;max-width:440px;width:100%;animation:scaleIn 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+.alarm-bell{font-size:80px;display:block;margin:0 auto 20px;animation:alarmShake 0.4s ease infinite alternate}
+@keyframes alarmShake{0%{transform:rotate(-10deg) scale(1.08)}100%{transform:rotate(10deg) scale(1.12)}}
+.alarm-event-name{font-family:var(--font-display);font-size:34px;font-weight:800;color:#fff;letter-spacing:-1px;margin-bottom:10px;line-height:1.2}
+.alarm-sub{font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:44px;line-height:1.5}
+.alarm-snooze-btn{background:linear-gradient(135deg,#f7924f,#f7c94f);color:#fff;border:none;border-radius:50px;padding:20px 80px;font-family:var(--font-display);font-size:22px;font-weight:800;cursor:pointer;letter-spacing:0.5px;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 8px 40px rgba(247,146,79,0.5);display:block;margin:0 auto}
+.alarm-snooze-btn:hover{transform:scale(1.05);box-shadow:0 14px 50px rgba(247,146,79,0.7)}
+.alarm-snooze-btn:active{transform:scale(0.97)}
+.alarm-dismiss-btn{display:block;margin:18px auto 0;background:transparent;border:none;color:rgba(255,255,255,0.35);font-size:13px;cursor:pointer;font-family:var(--font);transition:color 0.2s;padding:6px 16px;border-radius:20px}
+.alarm-dismiss-btn:hover{color:rgba(255,255,255,0.6)}
+
+/* ─── DASH TODAY EVENTS ─── */
+.today-event-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
+.today-event-row:last-child{border-bottom:none}
+.today-event-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.today-event-time{font-size:11px;color:var(--text3);font-family:var(--font-mono);min-width:44px}
+.today-event-name{font-size:13px;font-weight:500;flex:1}
+</style>
+</head>
+<body>
+<div id="toast-container"></div>
+
+<!-- ══════════════ ALARM MODAL ══════════════ -->
+<div id="alarm-overlay">
+  <div class="alarm-modal">
+    <span class="alarm-bell">🔔</span>
+    <div class="alarm-event-name" id="alarm-event-name">Event</div>
+    <div class="alarm-sub" id="alarm-sub">This event is happening right now!</div>
+    <button class="alarm-snooze-btn" onclick="snoozeAlarm()">Snooze</button>
+    <button class="alarm-dismiss-btn" onclick="dismissAlarm()">Dismiss</button>
+  </div>
+</div>
+
+<!-- ══════════════ VERIFY PAGE ══════════════ -->
+<div class="page active" id="page-verify">
+  <div class="verify-bg"></div>
+  <div class="verify-grid"></div>
+  <div class="verify-card">
+    <div class="verify-logo">
+      <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="40" r="38" fill="url(#vg1)" opacity="0.15"/>
+        <circle cx="40" cy="40" r="32" fill="url(#vg2)" opacity="0.2"/>
+        <ellipse cx="40" cy="46" rx="18" ry="20" fill="#4f8ef7"/>
+        <ellipse cx="40" cy="46" rx="12" ry="14" fill="#e8eaf0" opacity="0.9"/>
+        <path d="M22 50 Q14 40 18 30 Q26 38 28 46Z" fill="#3a7de8"/>
+        <path d="M58 50 Q66 40 62 30 Q54 38 52 46Z" fill="#3a7de8"/>
+        <circle cx="40" cy="28" r="14" fill="#4f8ef7"/>
+        <circle cx="35" cy="27" r="5" fill="#fff"/><circle cx="45" cy="27" r="5" fill="#fff"/>
+        <circle cx="36" cy="28" r="3" fill="#1a1d24"/><circle cx="46" cy="28" r="3" fill="#1a1d24"/>
+        <circle cx="37" cy="27" r="1" fill="#fff"/><circle cx="47" cy="27" r="1" fill="#fff"/>
+        <path d="M37 32 L43 32 L40 36Z" fill="#f7c94f"/>
+        <path d="M29 18 L32 25 L36 18Z" fill="#3a7de8"/>
+        <path d="M51 18 L48 25 L44 18Z" fill="#3a7de8"/>
+        <rect x="27" y="14" width="26" height="4" rx="2" fill="#1a1d24"/>
+        <rect x="37" y="10" width="6" height="5" rx="1" fill="#1a1d24"/>
+        <circle cx="43" cy="10" r="2" fill="#f7c94f"/>
+        <defs>
+          <radialGradient id="vg1" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4f8ef7"/><stop offset="100%" stop-color="#7c5cfc"/></radialGradient>
+          <radialGradient id="vg2" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#4f8ef7"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+        </defs>
+      </svg>
+    </div>
+    <div class="verify-school">🏫 Greenwood High School</div>
+    <div class="verify-title">GradeSight Pro</div>
+    <div class="verify-sub">Smart student tracking &amp; classroom management<br>for educators at Greenwood High</div>
+    <div id="verify-question">
+      <p style="font-size:15px;font-weight:600;margin-bottom:16px">Are you a staff member at Greenwood High School?</p>
+      <div class="verify-actions">
+        <button class="btn btn-primary btn-lg" onclick="verifyYes()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Yes, I'm a Greenwood High Teacher
+        </button>
+        <button class="btn btn-ghost btn-lg" onclick="verifyNo()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          No, I'm not staff here
+        </button>
+      </div>
+    </div>
+    <div id="verify-denied" class="verify-denied">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--red);width:56px;height:56px"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      <div style="font-size:18px;font-weight:700">Access Denied</div>
+      <div style="color:var(--text2);font-size:14px;text-align:center">GradeSight Pro is exclusively for Greenwood High School staff members. Please contact your school administrator for access.</div>
+      <button class="btn btn-secondary" onclick="document.getElementById('verify-denied').style.display='none';document.getElementById('verify-question').style.display='block'">← Go Back</button>
+    </div>
+    <div class="verify-not-staff" style="display:flex;align-items:center;justify-content:center;gap:8px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <span style="font-size:12px">Light/Dark</span>
+      <div class="theme-toggle" onclick="toggleTheme()"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ REGISTRATION MODAL (ALL-IN-ONE) ══════════════ -->
+<div id="reg-modal-overlay">
+  <div id="reg-modal">
+    <div class="reg-title">👤 Teacher Profile Setup</div>
+    <div class="reg-sub">Enter all your details here. You can edit them anytime from the dashboard.</div>
+
+    <!-- Name row -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div class="input-group" style="flex:1;min-width:140px">
+        <label class="label">First Name</label>
+        <input class="input" id="reg-fname" type="text" placeholder="e.g. Priya" autofocus>
+      </div>
+      <div class="input-group" style="flex:1;min-width:140px">
+        <label class="label">Last Name</label>
+        <input class="input" id="reg-lname" type="text" placeholder="e.g. Sharma">
+      </div>
+    </div>
+
+    <!-- Subjects -->
+    <div class="input-group">
+      <label class="label">Subjects You Teach</label>
+      <div class="tags-input-wrap" id="reg-subjects-wrap" onclick="document.getElementById('reg-subjects-input').focus()">
+        <input class="tags-input" id="reg-subjects-input" placeholder="Type subject, press Enter…">
+      </div>
+    </div>
+
+    <!-- Sections -->
+    <div class="input-group">
+      <label class="label">Sections Taught (e.g. 8A, 9B)</label>
+      <div class="tags-input-wrap" id="reg-sections-wrap" onclick="document.getElementById('reg-sections-input').focus()">
+        <input class="tags-input" id="reg-sections-input" placeholder="Type section, press Enter…">
+      </div>
+    </div>
+
+    <!-- Class teacher -->
+    <div class="input-group">
+      <label class="label">Class Teacher Section <span style="color:var(--text3);font-weight:400">(optional)</span></label>
+      <input class="input" id="reg-class-section" type="text" placeholder="e.g. 8A (leave blank if not a class teacher)">
+    </div>
+
+    <button class="btn btn-success btn-lg" style="width:100%;justify-content:center;margin-top:4px" onclick="finishReg()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      Launch GradeSight Pro
+    </button>
+    <div style="font-size:12px;color:var(--text3);margin-top:10px;text-align:center">💡 All fields (except class section) are required</div>
+  </div>
+</div>
+
+<!-- ══════════════ MAIN APP ══════════════ -->
+<div class="page" id="page-main">
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <div><div class="sidebar-logo-text">GradeSight Pro</div><div class="sidebar-logo-sub">Greenwood High</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-label">Overview</div>
+        <button class="nav-item active" data-section="dashboard" onclick="navTo('dashboard',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
+        </button>
+        <button class="nav-item" data-section="timetable" onclick="navTo('timetable',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Timetable
+        </button>
+        <button class="nav-item" data-section="calendar" onclick="navTo('calendar',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>Calendar
+        </button>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Academics</div>
+        <button class="nav-item" data-section="students" onclick="navTo('students',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Students
+        </button>
+        <button class="nav-item" data-section="calculator" onclick="navTo('calculator',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>Calculators
+        </button>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-label">Info</div>
+        <button class="nav-item" data-section="about" onclick="navTo('about',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>About
+        </button>
+      </div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="user-avatar" id="sidebar-avatar">?</div>
+        <div style="flex:1;min-width:0">
+          <div class="user-name" id="sidebar-name">Loading…</div>
+          <div class="user-role" id="sidebar-role">Teacher</div>
+        </div>
+        <div class="theme-toggle" onclick="toggleTheme()" style="flex-shrink:0"></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="topbar">
+    <button class="mobile-menu-btn" onclick="openSidebar()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="topbar-title" id="topbar-title">Dashboard</div>
+    <div class="topbar-actions">
+      <button class="btn btn-sm btn-secondary" onclick="navTo('students',document.querySelector('[data-section=students]'))">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Add Students
+      </button>
+      <button class="btn btn-sm" style="background:rgba(247,146,79,0.15);color:var(--accent3);border:1px solid rgba(247,146,79,0.3)" onclick="testAlarm()" title="Preview alarm">
+        🔔 Test Alarm
+      </button>
+    </div>
+  </div>
+
+  <main class="main-content">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <section class="content-section active" id="section-dashboard">
+      <!-- Greeting merged with stats (no separate box) -->
+      <div class="dash-header anim-fadeup">
+        <div class="dash-name-row">
+          <div>
+            <div class="dash-greeting" id="dash-greeting">Hello, Teacher! 👋</div>
+            <div class="dash-sub" id="dash-sub">Welcome back to GradeSight Pro · Greenwood High School</div>
+          </div>
+        </div>
+        <div class="dash-chips-row" id="dash-chips"></div>
+      </div>
+
+      <div class="grid grid-4" style="margin-bottom:24px">
+        <div class="stat-card anim-fadeup" style="animation-delay:0.05s">
+          <div class="stat-label">Total Students</div><div class="stat-value" id="stat-students">0</div><div class="stat-sub">Across all sections</div>
+        </div>
+        <div class="stat-card anim-fadeup" style="animation-delay:0.1s">
+          <div class="stat-label">Subjects</div><div class="stat-value" id="stat-subjects">0</div><div class="stat-sub">Teaching</div>
+        </div>
+        <div class="stat-card anim-fadeup" style="animation-delay:0.15s">
+          <div class="stat-label">Sections</div><div class="stat-value" id="stat-sections">0</div><div class="stat-sub">Assigned classes</div>
+        </div>
+        <div class="stat-card anim-fadeup" style="animation-delay:0.2s">
+          <div class="stat-label">Events</div><div class="stat-value" id="stat-events">0</div><div class="stat-sub">This month</div>
+        </div>
+      </div>
+
+      <div class="grid grid-2" style="margin-bottom:24px">
+        <!-- Timetable widget -->
+        <div class="card anim-fadeup" style="animation-delay:0.25s" id="dash-timetable-widget">
+          <div class="section-header" style="margin-bottom:16px">
+            <div class="section-title" style="font-size:16px">Timetable</div>
+            <div id="tt-widget-actions"></div>
+          </div>
+          <div id="tt-widget-content">
+            <div class="empty-state" style="padding:24px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px;height:40px;margin:0 auto 10px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+              <p style="font-size:13px">No timetable yet</p>
+            </div>
+          </div>
+        </div>
+        <!-- Countdown widget — 3 panels -->
+        <div class="card anim-fadeup" style="animation-delay:0.3s;padding:0;overflow:hidden">
+          <!-- Panel 1: Today's events -->
+          <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px">📅 Today's Events</div>
+            <div id="dash-today-events"><span style="font-size:13px;color:var(--text3);font-style:italic">No events today</span></div>
+          </div>
+          <!-- Panel 2: Countdown -->
+          <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:10px">⏱️ Next Event</div>
+            <div id="dash-countdown-content"><span style="font-size:13px;color:var(--text3);font-style:italic">No upcoming events</span></div>
+          </div>
+          <!-- Panel 3: Add event button -->
+          <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+            <span style="font-size:12px;color:var(--text3)">Add a new school event</span>
+            <button class="btn btn-primary btn-sm" onclick="navTo('calendar',document.querySelector('[data-section=calendar]'));setTimeout(openAddEvent,300)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Event
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Scorers -->
+      <div class="card anim-fadeup" style="animation-delay:0.35s">
+        <div class="section-header">
+          <div>
+            <div class="section-title" style="font-size:16px">Top Scorers Summary</div>
+            <div class="section-sub" style="font-size:12px">Best performers across all exams</div>
+          </div>
+        </div>
+        <div id="top-scorers-summary">
+          <div class="empty-state" style="padding:24px"><p style="font-size:13px">Add students and enter marks to see top scorers</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ TIMETABLE ═══ -->
+    <section class="content-section" id="section-timetable">
+      <div class="section-header">
+        <div><div class="section-title">Drag and drop blocks to build your weekly schedule</div><div class="section-sub"></div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" id="btn-finish-tt" onclick="finishTimetable()" style="display:none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Finish &amp; Save
+          </button>
+        </div>
+      </div>
+      <div id="tt-content">
+        <div class="card" style="margin-bottom:20px">
+          <div class="section-title" style="font-size:16px;margin-bottom:16px">Setup</div>
+          <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap">
+            <div class="input-group" style="margin:0;flex:1;min-width:200px">
+              <label class="label">Number of Periods per Day</label>
+              <input class="input" id="tt-periods" type="number" min="1" max="12" value="8" placeholder="8">
+            </div>
+            <button class="btn btn-primary" onclick="buildTimetable()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Build Grid
+            </button>
+          </div>
+        </div>
+        <div id="tt-builder-area"></div>
+      </div>
+      <div id="tt-saved-view" style="display:none">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+          <button class="btn btn-ghost btn-sm" onclick="editTimetable()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit Timetable
+          </button>
+        </div>
+        <div id="tt-display"></div>
+      </div>
+    </section>
+
+    <!-- ═══ CALENDAR ═══ -->
+    <section class="content-section" id="section-calendar">
+      <div class="section-header">
+        <div><div class="section-title">Track events, exams, and school activities</div><div class="section-sub"></div></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn btn-ghost btn-sm" id="cal-view-month-btn" onclick="setCalView('month')" style="border-color:var(--accent);color:var(--accent)">Month</button>
+          <button class="btn btn-ghost btn-sm" id="cal-view-week-btn" onclick="setCalView('week')">Week</button>
+          <button class="btn btn-primary" onclick="openAddEvent()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Event
+          </button>
+        </div>
+      </div>
+
+      <!-- All Events expandable — above calendar -->
+      <div class="events-top-bar">
+        <div class="events-top-bar-header">
+          <span class="events-top-bar-title">📋 All Events <span id="events-count" style="font-size:12px;color:var(--text2);font-weight:400"></span></span>
+          <button class="btn btn-ghost btn-sm" id="events-toggle-btn" onclick="toggleEventsPanel()">▼ Expand</button>
+        </div>
+        <div class="events-collapse-body" id="events-collapse-body">
+          <div id="all-events-list" style="padding-top:12px"></div>
+        </div>
+      </div>
+
+      <!-- Calendar nav -->
+      <div class="card" style="margin-bottom:0;padding:14px 20px;border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom:none;display:flex;align-items:center;gap:12px">
+        <button class="btn btn-ghost btn-sm" onclick="calNavOutlook(-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button class="btn btn-ghost btn-sm" onclick="calNavOutlook(1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+        <div style="font-family:var(--font-display);font-size:17px;font-weight:700" id="cal-month-label"></div>
+        <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="calGoToday()">Today</button>
+      </div>
+
+      <!-- Month view -->
+      <div id="cal-month-view" class="card" style="border-top-left-radius:0;border-top-right-radius:0;margin-bottom:16px;padding:16px">
+        <div class="cal-header-row" id="cal-dow-header"></div>
+        <div class="calendar-grid" id="cal-grid"></div>
+      </div>
+
+      <!-- Week / Outlook view -->
+      <div id="cal-week-view" style="display:none;margin-bottom:16px">
+        <div class="card" style="padding:0;overflow:hidden">
+          <!-- Day headers -->
+          <div id="outlook-day-headers" style="display:grid;border-bottom:1px solid var(--border)"></div>
+          <!-- Time grid -->
+          <div style="display:flex;overflow-y:auto;max-height:600px" id="outlook-scroll-area">
+            <!-- Time labels -->
+            <div id="outlook-time-col" style="width:64px;flex-shrink:0;border-right:1px solid var(--border);padding-top:0"></div>
+            <!-- Day columns -->
+            <div id="outlook-day-cols" style="flex:1;display:grid;position:relative"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="cal-day-events"></div>
+
+      <!-- Calendar page live countdown -->
+      <div class="card" id="cal-countdown-card" style="margin-top:4px;padding:22px;display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div style="font-size:15px;font-weight:700;font-family:var(--font-display)">⏱️ Event Countdowns</div>
+        </div>
+        <div id="cal-countdown-content"></div>
+      </div>
+    </section>
+
+    <!-- ═══ STUDENTS ═══ -->
+    <section class="content-section" id="section-students">
+      <div class="section-header">
+        <div><div class="section-title">Manage students and track academic performance</div><div class="section-sub"></div></div>
+      </div>
+      <div class="students-tabs" id="exam-tabs">
+        <button class="tab active" onclick="switchExamTab('general',this)" data-exam="general">General</button>
+        <button class="tab" onclick="switchExamTab('ut1',this)" data-exam="ut1">Unit Test 1</button>
+        <button class="tab" onclick="switchExamTab('term1',this)" data-exam="term1">Term 1</button>
+        <button class="tab" onclick="switchExamTab('ut2',this)" data-exam="ut2">Unit Test 2</button>
+        <button class="tab" onclick="switchExamTab('term2',this)" data-exam="term2">Term 2 (Final)</button>
+      </div>
+      <div id="exam-content"></div>
+    </section>
+
+    <!-- ═══ CALCULATORS ═══ -->
+    <section class="content-section" id="section-calculator">
+      <div class="section-header">
+        <div><div class="section-title">Math calculator and score analysis tools</div><div class="section-sub"></div></div>
+      </div>
+      <div class="tabs" style="max-width:400px">
+        <button class="tab active" onclick="switchCalcTab('math',this)">Math</button>
+        <button class="tab" onclick="switchCalcTab('score',this)">Score</button>
+        <button class="tab" onclick="switchCalcTab('percent',this)">Percentile</button>
+      </div>
+      <div id="calc-math" class="calc-section">
+        <div class="calc-wrap">
+          <div class="calc-display">
+            <div class="calc-expr" id="calc-expr"></div>
+            <div class="calc-result" id="calc-result">0</div>
+          </div>
+          <div class="calc-keys">
+            <button class="calc-key clear" onclick="calcClear()">C</button>
+            <button class="calc-key clear" onclick="calcBackspace()">⌫</button>
+            <button class="calc-key op" onclick="calcOp('%')">%</button>
+            <button class="calc-key op" onclick="calcOp('/')">÷</button>
+            <button class="calc-key" onclick="calcNum('7')">7</button><button class="calc-key" onclick="calcNum('8')">8</button><button class="calc-key" onclick="calcNum('9')">9</button>
+            <button class="calc-key op" onclick="calcOp('*')">×</button>
+            <button class="calc-key" onclick="calcNum('4')">4</button><button class="calc-key" onclick="calcNum('5')">5</button><button class="calc-key" onclick="calcNum('6')">6</button>
+            <button class="calc-key op" onclick="calcOp('-')">−</button>
+            <button class="calc-key" onclick="calcNum('1')">1</button><button class="calc-key" onclick="calcNum('2')">2</button><button class="calc-key" onclick="calcNum('3')">3</button>
+            <button class="calc-key op" onclick="calcOp('+')">+</button>
+            <button class="calc-key" onclick="calcPlusMinus()">+/−</button>
+            <button class="calc-key zero" onclick="calcNum('0')">0</button>
+            <button class="calc-key" onclick="calcDot()">.</button>
+            <button class="calc-key eq" onclick="calcEquals()">=</button>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+            <button class="calc-key op" style="flex:1;padding:10px" onclick="calcFn('sqrt')">√</button>
+            <button class="calc-key op" style="flex:1;padding:10px" onclick="calcFn('sq')">x²</button>
+            <button class="calc-key op" style="flex:1;padding:10px" onclick="calcOp('**')">xⁿ</button>
+            <button class="calc-key op" style="flex:1;padding:10px" onclick="calcFn('1/x')">1/x</button>
+            <button class="calc-key op" style="flex:1;padding:10px" onclick="calcOp('(')">(</button>
+            <button class="calc-key op" style="flex:1;padding:10px" onclick="calcOp(')')">)</button>
+          </div>
+        </div>
+      </div>
+      <div id="calc-score" class="calc-section" style="display:none">
+        <div class="card" style="max-width:500px">
+          <div class="section-title" style="font-size:16px;margin-bottom:20px">Score Calculator</div>
+          <div class="input-group"><label class="label">Exam Type</label>
+            <select class="input" id="sc-type"><option value="ut">Unit Test (/25)</option><option value="term">Term Exam (/80)</option><option value="custom">Custom</option></select>
+          </div>
+          <div class="input-group" id="sc-max-group" style="display:none"><label class="label">Maximum Marks</label><input class="input" id="sc-max" type="number" placeholder="100"></div>
+          <div class="input-group"><label class="label">Marks Obtained</label><input class="input" id="sc-obtained" type="number" placeholder="0"></div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="calcScore()">Calculate</button>
+          <div id="sc-result" style="margin-top:20px"></div>
+        </div>
+      </div>
+      <div id="calc-percent" class="calc-section" style="display:none">
+        <div class="card" style="max-width:500px">
+          <div class="section-title" style="font-size:16px;margin-bottom:20px">Percentile Calculator</div>
+          <div class="input-group"><label class="label">Student's Score</label><input class="input" id="pc-score" type="number" placeholder="e.g. 85"></div>
+          <div class="input-group"><label class="label">Total Number of Students</label><input class="input" id="pc-total" type="number" placeholder="e.g. 40"></div>
+          <div class="input-group"><label class="label">Students who scored less than this student</label><input class="input" id="pc-below" type="number" placeholder="e.g. 32"></div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="calcPercentile()">Calculate Percentile</button>
+          <div id="pc-result" style="margin-top:20px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ ABOUT ═══ -->
+    <section class="content-section" id="section-about">
+
+      <!-- Hero banner -->
+      <div class="about-hero" style="position:relative;overflow:hidden;text-align:center;padding:56px 32px;background:linear-gradient(135deg,var(--card) 0%,var(--card2) 100%);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:28px">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(79,142,247,0.13) 0%,transparent 65%),radial-gradient(ellipse at 90% 110%,rgba(124,92,252,0.10) 0%,transparent 60%);pointer-events:none"></div>
+        <div style="position:relative;z-index:1">
+          <div style="font-size:60px;margin-bottom:12px;animation:float 3s ease-in-out infinite;display:inline-block">📚</div>
+          <div style="font-family:var(--font-display);font-size:38px;font-weight:800;letter-spacing:-1px;margin-bottom:10px;background:linear-gradient(135deg,var(--text) 0%,var(--accent) 60%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent">GradeSight Pro</div>
+          <div style="font-size:15px;color:var(--text2);max-width:540px;margin:0 auto 20px;line-height:1.7">The all-in-one academic management platform built exclusively for Greenwood High School teachers. From student marks to weekly schedules — everything a teacher needs, in one place.</div>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <span class="badge badge-accent">v2.0</span>
+            <span class="badge badge-green">Greenwood High Exclusive</span>
+            <span class="badge">Built for Educators</span>
+            <span class="badge" style="background:rgba(247,201,79,0.12);color:var(--yellow)">Made in India by a responsible citizen</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature grid -->
+      <div class="feature-grid" style="margin-bottom:28px">
+        <div class="feature-item"><div class="feature-icon">👨‍🎓</div><div class="feature-name">Student Management</div><div class="feature-desc">Add, organize, and filter students across grades 1–9 and sections A–J</div></div>
+        <div class="feature-item"><div class="feature-icon">📝</div><div class="feature-name">Mark Entry</div><div class="feature-desc">Enter marks for unit tests (/25) and term exams (/80) with live auto-calculation</div></div>
+        <div class="feature-item"><div class="feature-icon">📊</div><div class="feature-name">Smart Analytics</div><div class="feature-desc">Instant percentages, class averages, and top scorer highlights per class</div></div>
+        <div class="feature-item"><div class="feature-icon">🗓️</div><div class="feature-name">Timetable Builder</div><div class="feature-desc">Drag-and-drop weekly schedule builder with color-coded period blocks</div></div>
+        <div class="feature-item"><div class="feature-icon">⏱️</div><div class="feature-name">Live Countdown</div><div class="feature-desc">Second-by-second event countdown with browser push notifications</div></div>
+        <div class="feature-item"><div class="feature-icon">🧮</div><div class="feature-name">Calculators</div><div class="feature-desc">Scientific math calculator + score percentage and weighted average tools</div></div>
+        <div class="feature-item"><div class="feature-icon">👑</div><div class="feature-name">Class Teacher Mode</div><div class="feature-desc">Crown-marked class teachers unlock marks entry across every subject</div></div>
+        <div class="feature-item"><div class="feature-icon">🌙</div><div class="feature-name">Light &amp; Dark Mode</div><div class="feature-desc">Seamlessly switch between themes — saved across sessions automatically</div></div>
+	<div class="feature-item"><div class="feature-icon">⏰</div><div class="feature-name">In built alarm</div><div class="feature-desc">Built in alarms for every event - no need to worry about missed schedules</div></div>
+      </div>
+
+      <!-- About the platform -->
+      <div class="about-section-card">
+        <div class="about-section-title">About GradeSight Pro</div>
+        <p style="color:var(--text2);font-size:14px;line-height:1.8;margin-bottom:14px">GradeSight Pro was built out of a very real frustration — watching teachers juggle spreadsheets, paper mark sheets, and scattered Excel Sheets just to manage their classrooms. The goal from day one was simple: bring everything a Greenwood High teacher needs into a single, fast, beautiful interface that actually gets out of the way and lets them teach.</p>
+        <p style="color:var(--text2);font-size:14px;line-height:1.8;margin-bottom:14px">Every feature was designed around real classroom workflows. The exam tabs mirror the school's actual assessment structure — Unit Tests and Terms. The timetable builder reflects the way periods are actually planned. The countdown timer keeps teachers aware of upcoming events without having to check a separate calendar app.</p>
+        <p style="color:var(--text2);font-size:14px;line-height:1.8">Class teachers — the ones responsible for an entire section — get a special 👑 Crown Mode that unlocks marks entry across every subject for their class, not just the subjects they personally teach. The platform then does the heavy lifting: calculating totals, percentages, class averages, and surfacing the top performer automatically.</p>
+        <div class="divider"></div>
+        <div style="font-size:13px;color:var(--text3)">Made with ❤️ for Greenwood High School · GradeSight Pro © 2026</div>
+      </div>
+
+      <!-- Developer section -->
+      <div class="about-section-card">
+        <div class="about-section-title">The Developer</div>
+        <div class="dev-block">
+          <div class="dev-avatar" style="width:80px;height:80px;font-size:34px;flex-shrink:0;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center">👨‍💻</div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+              <div class="dev-name" style="font-size:22px;font-weight:800">Sathvik</div>
+              <span class="badge badge-accent">Class 7</span>
+              <span class="badge" style="background:rgba(62,207,142,0.12);color:var(--green)">Greenwood High</span>
+            </div>
+            <div class="dev-info" style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:14px">
+              A 12 years old, Class 6 student at Greenwood High School — and the person who built the very tool you're using right now. I started coding because I wanted to build things that actually solved problems around me, not just tutorial projects that live in a GitHub repo nobody visits.<br><br>
+              GradeSight Pro started as a simple marks tracker and grew into this full platform as I kept noticing more things teachers had to do manually. I care a lot about design — not just how things look, but how they <em>feel</em> to use. Fast, responsive, no clutter. If something takes too many clicks, it's broken.<br><br>
+              Outside of this, I build browser games, finance tools, study platforms, and calculators. Everything is free, open, and made with the same principle: solve a real problem, make it look good, ship it. Also, visit my Github profile by clicking on the oval button next to the following sentence. Follow me if you can! <a href="https://github.com/ArcadeOS-Dev" target="_blank" class="dev-social">My profile!</a>
+
+            </div>
+            <div class="dev-socials">
+              <a href="https://arcadeos-dev.github.io/mr.trader" target="_blank" class="dev-social">The Dalal St. Terminal</a>
+              <a href="https://arcadeos-dev.github.io/Arcade-OS" target="_blank" class="dev-social">🕹️ Arcade OS</a>
+              <a href="https://arcadeos-dev.github.io/FinanceFlow" target="_blank" class="dev-social">💸 FinanceFlow</a>
+              <a href="https://arcadeos-dev.github.io/CalcHub" target="_blank" class="dev-social">🧮 CalcHub</a>
+	      <a href="https://arcadeos-dev.github.io/SchoolEd" target="_blank" class="dev-social">SchoolEd</a>
+	      <a href="https://arcadeos-dev.github.io/Sathvik6b" target="_blank" class="dev-social">On This Day</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Projects grid -->
+      <div class="about-section-card">
+        <div class="about-section-title">🚀 More Projects by Sathvik</div>
+        <p style="color:var(--text2);font-size:14px;line-height:1.7;margin-bottom:20px">A growing portfolio of free web tools — each one built to scratch a real itch. No accounts, no paywalls, just open and working.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">
+
+          <a href="https://arcadeos-dev.github.io/Arcade-OS" target="_blank" class="site-link" style="align-items:flex-start;gap:14px;padding:18px">
+            <div class="site-link-icon" style="background:rgba(124,92,252,0.15);width:44px;height:44px;font-size:22px;flex-shrink:0">🕹️</div>
+            <div>
+              <div class="site-link-name" style="font-size:15px;margin-bottom:4px">Arcade OS</div>
+              <div class="site-link-sub" style="font-size:13px;line-height:1.5;margin-bottom:6px">Full browser gaming platform — no downloads, just play.</div>
+              <div style="font-size:11px;color:var(--accent);font-family:var(--font-mono)">arcadeos-dev.github.io/Arcade-OS ↗</div>
+            </div>
+          </a>
+
+          <a href="https://arcadeos-dev.github.io/SchoolEd" target="_blank" class="site-link" style="align-items:flex-start;gap:14px;padding:18px">
+            <div class="site-link-icon" style="background:rgba(62,207,142,0.15);width:44px;height:44px;font-size:22px;flex-shrink:0">🎮</div>
+            <div>
+              <div class="site-link-name" style="font-size:15px;margin-bottom:4px">SchoolEd</div>
+              <div class="site-link-sub" style="font-size:13px;line-height:1.5;margin-bottom:6px">Games disguised as an educational site — sneaks past school - yeah, I think I've said too much😏.</div>
+              <div style="font-size:11px;color:var(--accent);font-family:var(--font-mono)">arcadeos-dev.github.io/SchoolEd ↗</div>
+            </div>
+          </a>
+
+          <a href="https://arcadeos-dev.github.io/FinanceFlow" target="_blank" class="site-link" style="align-items:flex-start;gap:14px;padding:18px">
+            <div class="site-link-icon" style="background:rgba(247,201,79,0.15);width:44px;height:44px;font-size:22px;flex-shrink:0">💸</div>
+            <div>
+              <div class="site-link-name" style="font-size:15px;margin-bottom:4px">FinanceFlow</div>
+              <div class="site-link-sub" style="font-size:13px;line-height:1.5;margin-bottom:6px">Personal expense tracker with budgets, alerts, and CSV export.</div>
+              <div style="font-size:11px;color:var(--accent);font-family:var(--font-mono)">arcadeos-dev.github.io/FinanceFlow ↗</div>
+            </div>
+          </a>
+
+          <a href="https://arcadeos-dev.github.io/CalcHub" target="_blank" class="site-link" style="align-items:flex-start;gap:14px;padding:18px">
+            <div class="site-link-icon" style="background:rgba(247,146,79,0.15);width:44px;height:44px;font-size:22px;flex-shrink:0">🧮</div>
+            <div>
+              <div class="site-link-name" style="font-size:15px;margin-bottom:4px">CalcHub</div>
+              <div class="site-link-sub" style="font-size:13px;line-height:1.5;margin-bottom:6px">80+ free calculators for math, science, finance and health.</div>
+              <div style="font-size:11px;color:var(--accent);font-family:var(--font-mono)">arcadeos-dev.github.io/CalcHub ↗</div>
+            </div>
+          </a>
+
+          <a href="https://arcadeos-dev.github.io/Sathvik6b/" target="_blank" class="site-link" style="align-items:flex-start;gap:14px;padding:18px">
+            <div class="site-link-icon" style="background:rgba(56,189,248,0.15);width:44px;height:44px;font-size:22px;flex-shrink:0">📰</div>
+            <div>
+              <div class="site-link-name" style="font-size:15px;margin-bottom:4px">On This Day</div>
+              <div class="site-link-sub" style="font-size:13px;line-height:1.5;margin-bottom:6px">An online newsletter with historical events for any given day.</div>
+              <div style="font-size:11px;color:var(--accent);font-family:var(--font-mono)">arcadeos-dev.github.io/Sathvik6b ↗</div>
+            </div>
+          </a>
+
+	  <a href="https://arcadeos-dev.github.io/mr.trader/" target="_blank" class="site-link" style="align-items:flex-start;gap:14px;padding:18px">
+            <div class="site-link-icon" style="background:rgba(56,189,248,0.15);width:44px;height:44px;font-size:22px;flex-shrink:0"></div>
+            <div>
+              <div class="site-link-name" style="font-size:15px;margin-bottom:4px">The Dalal St. Terminal</div>
+              <div class="site-link-sub" style="font-size:13px;line-height:1.5;margin-bottom:6px">The Dalal St. Terminal is a website where you can practice trading comfortably, as its not linked to your bank account. No worries, just experience.</div>
+              <div style="font-size:11px;color:var(--accent);font-family:var(--font-mono)">arcadeos-dev.github.io/mr.trader ↗</div>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<!-- ══════════ MODALS ══════════ -->
+<div class="modal-overlay" id="modal-add-student">
+  <div class="modal">
+    <div class="modal-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>Add Student
+    </div>
+    <div class="input-group"><label class="label">Full Name</label><input class="input" id="st-name" placeholder="Student's full name"></div>
+    <div class="input-group"><label class="label">Roll Number</label><input class="input" id="st-roll" type="number" placeholder="e.g. 1"></div>
+    <div class="input-group">
+      <label class="label">Class &amp; Section</label>
+      <div style="display:flex;gap:8px">
+        <select class="input" id="st-grade"><option value="">Grade</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select>
+        <select class="input" id="st-section"><option value="">Section</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="saveStudent()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Save (Enter)
+      </button>
+      <button class="btn btn-ghost" onclick="saveStudentAndNext()">Save + Add</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-student')">Cancel</button>
+    </div>
+    <div style="font-size:12px;color:var(--text3);margin-top:12px">💡 Press Enter to save · Tab to save and add another</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-add-event">
+  <div class="modal">
+    <div class="modal-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 14h.01M12 14h.01"/></svg>Add Event
+    </div>
+    <div class="input-group"><label class="label">Event Name</label><input class="input" id="ev-name" placeholder="e.g. Annual Sports Day"></div>
+    <div class="input-group"><label class="label">Date</label><input class="input" id="ev-date" type="date"></div>
+    <div class="input-group"><label class="label">Time <span style="color:var(--text3);font-weight:400">(optional)</span></label><input class="input" id="ev-time" type="time"></div>
+    <div class="input-group"><label class="label">Notes <span style="color:var(--text3);font-weight:400">(optional)</span></label><textarea class="input" id="ev-notes" rows="3" placeholder="Additional details…"></textarea></div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="saveEvent()">Save Event</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-event')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-day-events">
+  <div class="modal">
+    <div class="modal-title" id="day-events-title">Events</div>
+    <div id="day-events-list"></div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-primary btn-sm" onclick="openAddEventFromDay()">+ Add Event</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-day-events')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let APP={
+  teacher:null,timetable:null,timetableInProgress:{},
+  events:[],students:[],marks:{},
+  currentExamTab:'general',currentStudentClass:null,
+  calMonth:new Date().getMonth(),calYear:new Date().getFullYear(),
+  calcExpr:'',calcResult:'0',calcNewNum:true,
+  selectedCalDay:null
+};
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const GRADES=['1','2','3','4','5','6','7','8','9'];
+const SECTIONS=['A','B','C','D','E','F','G','H','I','J'];
+const EXAM_TYPES={general:{label:'General',max:null},ut1:{label:'Unit Test 1',max:25},term1:{label:'Term 1',max:80},ut2:{label:'Unit Test 2',max:25},term2:{label:'Term 2 (Final)',max:80}};
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// Color palette for timetable blocks — works on both light & dark
+const BLOCK_COLORS=[
+  {bg:'#1e40af',fg:'#bfdbfe',border:'#3b82f6'},// blue
+  {bg:'#065f46',fg:'#a7f3d0',border:'#10b981'},// green
+  {bg:'#7c2d12',fg:'#fed7aa',border:'#f97316'},// orange
+  {bg:'#4c1d95',fg:'#e9d5ff',border:'#a78bfa'},// purple
+  {bg:'#831843',fg:'#fbcfe8',border:'#ec4899'},// pink
+  {bg:'#0c4a6e',fg:'#bae6fd',border:'#38bdf8'},// sky
+  {bg:'#713f12',fg:'#fef08a',border:'#eab308'},// yellow
+  {bg:'#134e4a',fg:'#ccfbf1',border:'#14b8a6'},// teal
+  {bg:'#1e1b4b',fg:'#c7d2fe',border:'#818cf8'},// indigo
+  {bg:'#450a0a',fg:'#fecaca',border:'#f87171'},// red
+];
+const EXTRA_BLOCKS=[
+  {label:'Break',color:0,type:'break'},
+  {label:'Free Period',color:6,type:'free'},
+  {label:'Assembly',color:3,type:'assembly'},
+  {label:'Lunch',color:2,type:'lunch'},
+  {label:'Substitution',color:7,type:'pe'},
+];
+
+function $(id){return document.getElementById(id)}
+function toast(msg,type='info'){
+  const t=document.createElement('div');
+  const icons={success:'✓',error:'✕',info:'ℹ',warning:'⚠'};
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span class="toast-icon">${icons[type]||'ℹ'}</span><span>${msg}</span>`;
+  $('toast-container').appendChild(t);
+  setTimeout(()=>{t.style.animation='fadeIn 0.3s reverse both';setTimeout(()=>t.remove(),300)},3000);
+}
+function openModal(id){$(id).classList.add('open')}
+function closeModal(id){$(id).classList.remove('open')}
+function save(){
+  try{localStorage.setItem('GradeSight_data',JSON.stringify({teacher:APP.teacher,timetable:APP.timetable,events:APP.events,students:APP.students,marks:APP.marks}))}catch(e){}
+}
+function load(){
+  try{const d=localStorage.getItem('GradeSight_data');if(d){const p=JSON.parse(d);Object.assign(APP,p)}}catch(e){}
+}
+function uid(){return Math.random().toString(36).slice(2)}
+function fmtDate(s){const d=new Date(s);return d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}
+function toggleTheme(){
+  const h=document.documentElement;
+  h.setAttribute('data-theme',h.getAttribute('data-theme')==='dark'?'light':'dark');
+}
+
+// ══════════════════════════════════════════
+// REGISTRATION MODAL (all-in-one)
+// ══════════════════════════════════════════
+const regSubjects=[];const regSections=[];
+
+function verifyYes(){
+  load();
+  if(APP.teacher){showPage('page-main');initMain();}
+  else{$('reg-modal-overlay').classList.add('open');setTimeout(()=>$('reg-fname').focus(),200)}
+}
+function verifyNo(){
+  $('verify-question').style.display='none';
+  $('verify-denied').style.display='flex';
+}
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+// Tags for reg modal
+function regSetupTags(inputId,arr,wrapId){
+  const input=$(inputId);
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===','){
+      e.preventDefault();
+      const v=input.value.trim().replace(/,$/,'');
+      if(v&&!arr.includes(v)){arr.push(v);regRenderTags(arr,wrapId,inputId)}
+      input.value='';
+    }
+    if(e.key==='Backspace'&&!input.value&&arr.length){arr.pop();regRenderTags(arr,wrapId,inputId)}
+  });
+}
+function regRenderTags(arr,wrapId,inputId){
+  const wrap=$(wrapId);
+  wrap.querySelectorAll('.tag-item').forEach(t=>t.remove());
+  arr.forEach((t,i)=>{
+    const el=document.createElement('div');el.className='tag-item';
+    el.innerHTML=`${t}<span class="tag-remove" onclick="regRemoveTag(${i},'${wrapId}','${inputId}')">×</span>`;
+    wrap.insertBefore(el,$(inputId));
+  });
+}
+function regRemoveTag(i,wrapId,inputId){
+  if(wrapId==='reg-subjects-wrap'){regSubjects.splice(i,1);regRenderTags(regSubjects,'reg-subjects-wrap','reg-subjects-input')}
+  else{regSections.splice(i,1);regRenderTags(regSections,'reg-sections-wrap','reg-sections-input')}
+}
+function finishReg(){
+  const fn=$('reg-fname').value.trim(),ln=$('reg-lname').value.trim();
+  if(!fn||!ln){toast('Please enter your first and last name','error');return}
+  if(!regSubjects.length){toast('Add at least one subject','error');return}
+  if(!regSections.length){toast('Add at least one section','error');return}
+  const cs=$('reg-class-section').value.trim();
+  APP.teacher={name:fn+' '+ln,subjects:[...regSubjects],sections:[...regSections],classSection:cs||null};
+  save();
+  $('reg-modal-overlay').classList.remove('open');
+  showPage('page-main');initMain();
+  toast('Welcome to GradeSight Pro, '+fn+'! 🎉','success');
+}
+
+// ══════════════════════════════════════════
+// MAIN INIT
+// ══════════════════════════════════════════
+let countdownInt=null;
+function initMain(){
+  const t=APP.teacher;
+  const initials=t.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  $('sidebar-avatar').textContent=initials;
+  $('sidebar-name').textContent=t.name;
+  $('sidebar-role').textContent=t.classSection?`Class Teacher · ${t.classSection}`:'Subject Teacher';
+  updateDashboard();
+  renderCalendar();
+  renderStudentSection();
+  if(APP.timetable)showSavedTimetable();
+  startCountdown();
+}
+function navTo(section,el){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.querySelectorAll('.content-section').forEach(s=>s.classList.remove('active'));
+  $('section-'+section).classList.add('active');
+  const titles={dashboard:'Dashboard',timetable:'Timetable',calendar:'Calendar',students:'Students',calculator:'Calculators',about:'About'};
+  $('topbar-title').textContent=titles[section]||section;
+  closeSidebar();
+}
+function openSidebar(){$('sidebar').classList.add('open');$('sidebar-overlay').classList.add('show')}
+function closeSidebar(){$('sidebar').classList.remove('open');$('sidebar-overlay').classList.remove('show')}
+
+// ══════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════
+function updateDashboard(){
+  const t=APP.teacher;if(!t)return;
+  const first=t.name.split(' ')[0];
+  $('dash-greeting').textContent=`Hello, ${first}! 👋`;
+  $('dash-sub').textContent=`Welcome back · ${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}`;
+  const chips=$('dash-chips');chips.innerHTML='';
+  t.subjects.forEach(s=>{chips.innerHTML+=`<span class="chip">📖 ${s}</span>`});
+  t.sections.forEach(s=>{chips.innerHTML+=`<span class="chip">🏫 ${s}${s===t.classSection?' 👑':''}</span>`});
+  $('stat-students').textContent=APP.students.length;
+  $('stat-subjects').textContent=t.subjects.length;
+  $('stat-sections').textContent=t.sections.length;
+  const now=new Date();
+  const thisMonth=APP.events.filter(e=>{const d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()});
+  $('stat-events').textContent=thisMonth.length;
+  updateTimetableWidget();
+  updateTopScorers();
+}
+
+function updateTimetableWidget(){
+  const actions=$('tt-widget-actions'),content=$('tt-widget-content');
+  if(APP.timetable){
+    actions.innerHTML=`<button class="btn btn-ghost btn-sm" onclick="navTo('timetable',document.querySelector('[data-section=timetable]'))">View / Edit</button>`;
+    // Show today's full period schedule
+    const today=DAYS[new Date().getDay()];
+    const days=APP.timetable.days||{};
+    const periods=APP.timetable.periods||8;
+    const todayPeriods=days[today]||{};
+    let html=`<div style="font-size:12px;color:var(--text2);margin-bottom:8px">Today — <strong>${today}</strong></div>`;
+    html+=`<div style="display:flex;flex-wrap:wrap;gap:6px;">`;
+    for(let p=0;p<periods;p++){
+      const block=todayPeriods[p];
+      if(block){
+        const c=BLOCK_COLORS[block.colorIdx||0];
+        html+=`<span style="padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;background:${c.bg};color:${c.fg};border:1px solid ${c.border}">P${p+1}: ${block.label}</span>`;
+      } else {
+        html+=`<span style="padding:4px 10px;border-radius:6px;font-size:12px;color:var(--text3);background:var(--bg3);border:1px solid var(--border)">P${p+1}: —</span>`;
+      }
+    }
+    html+=`</div>`;
+    content.innerHTML=html;
+  } else {
+    actions.innerHTML=`<button class="btn btn-primary btn-sm" onclick="navTo('timetable',document.querySelector('[data-section=timetable]'))">Add Timetable</button>`;
+    content.innerHTML=`<div class="empty-state" style="padding:24px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px;height:40px;margin:0 auto 10px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg><p style="font-size:13px">No timetable yet</p></div>`;
+  }
+}
+
+// ── Countdown (second-by-second, shown on dashboard) ──
+function startCountdown(){
+  if(countdownInt)clearInterval(countdownInt);
+  renderCountdown();
+  countdownInt=setInterval(renderCountdown,1000);
+}
+// ══════════════════════════════════════════
+// ALARM SYSTEM
+// ══════════════════════════════════════════
+let alarmCtx=null,alarmNodes=[],alarmLoopTimer=null,firedAlarms=new Set();
+function getAudioCtx(){if(!alarmCtx||alarmCtx.state==='closed')alarmCtx=new(window.AudioContext||window.webkitAudioContext)();return alarmCtx}
+function playAlarmSound(){
+  try{
+    stopAlarmSound();
+    const ctx=getAudioCtx();
+    const BPM=128, BEAT=60/BPM, S16=BEAT/4;
+
+    function kick(t){
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.type='sine';
+      o.frequency.setValueAtTime(180,t);
+      o.frequency.exponentialRampToValueAtTime(40,t+0.07);
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(0.9,t+0.005);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.28);
+      o.start(t);o.stop(t+0.3);
+      alarmNodes.push(o);
+    }
+
+    function snare(t){
+      // Noise burst
+      const bufSize=ctx.sampleRate*0.15;
+      const buf=ctx.createBuffer(1,bufSize,ctx.sampleRate);
+      const data=buf.getChannelData(0);
+      for(let i=0;i<bufSize;i++)data[i]=(Math.random()*2-1);
+      const src=ctx.createBufferSource();
+      src.buffer=buf;
+      const bpf=ctx.createBiquadFilter();bpf.type='bandpass';bpf.frequency.value=2500;bpf.Q.value=0.8;
+      const g=ctx.createGain();
+      src.connect(bpf);bpf.connect(g);g.connect(ctx.destination);
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(0.45,t+0.003);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.15);
+      src.start(t);src.stop(t+0.16);
+      alarmNodes.push(src);
+      // Body tone
+      const o2=ctx.createOscillator(),g2=ctx.createGain();
+      o2.connect(g2);g2.connect(ctx.destination);
+      o2.type='triangle';o2.frequency.value=220;
+      g2.gain.setValueAtTime(0.25,t);
+      g2.gain.exponentialRampToValueAtTime(0.0001,t+0.08);
+      o2.start(t);o2.stop(t+0.09);
+      alarmNodes.push(o2);
+    }
+
+    function hihat(t,vol=0.18,open=false){
+      const bufSize=ctx.sampleRate*0.05;
+      const buf=ctx.createBuffer(1,bufSize,ctx.sampleRate);
+      const data=buf.getChannelData(0);
+      for(let i=0;i<bufSize;i++)data[i]=(Math.random()*2-1);
+      const src=ctx.createBufferSource();src.buffer=buf;
+      const hpf=ctx.createBiquadFilter();hpf.type='highpass';hpf.frequency.value=8000;
+      const g=ctx.createGain();
+      src.connect(hpf);hpf.connect(g);g.connect(ctx.destination);
+      const dur=open?0.22:0.04;
+      g.gain.setValueAtTime(vol,t);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      src.start(t);src.stop(t+dur+0.01);
+      alarmNodes.push(src);
+    }
+
+    function dhol(t,vol=0.55){
+      // Deep tabla/dhol thump
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.type='sine';
+      o.frequency.setValueAtTime(130,t);
+      o.frequency.exponentialRampToValueAtTime(65,t+0.12);
+      g.gain.setValueAtTime(vol,t);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.22);
+      o.start(t);o.stop(t+0.24);
+      alarmNodes.push(o);
+    }
+
+    function dholHigh(t,vol=0.35){
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.type='triangle';
+      o.frequency.setValueAtTime(320,t);
+      o.frequency.exponentialRampToValueAtTime(180,t+0.07);
+      g.gain.setValueAtTime(vol,t);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.14);
+      o.start(t);o.stop(t+0.15);
+      alarmNodes.push(o);
+    }
+
+    function clap(t){
+      const bufSize=ctx.sampleRate*0.08;
+      const buf=ctx.createBuffer(1,bufSize,ctx.sampleRate);
+      const d=buf.getChannelData(0);
+      for(let i=0;i<bufSize;i++)d[i]=(Math.random()*2-1)*(1-i/bufSize);
+      const src=ctx.createBufferSource();src.buffer=buf;
+      const bpf=ctx.createBiquadFilter();bpf.type='bandpass';bpf.frequency.value=1800;bpf.Q.value=1.2;
+      const g=ctx.createGain();
+      src.connect(bpf);bpf.connect(g);g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.3,t);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.08);
+      src.start(t);src.stop(t+0.09);
+      alarmNodes.push(src);
+    }
+
+    // Melodic hook — "Ishq Jalakar" signature ascending line
+    function melnote(freq,t,dur,vol=0.18,type='sawtooth'){
+      const o=ctx.createOscillator();
+      const g=ctx.createGain();
+      const lpf=ctx.createBiquadFilter();lpf.type='lowpass';lpf.frequency.value=2200;
+      o.connect(lpf);lpf.connect(g);g.connect(ctx.destination);
+      o.type=type;o.frequency.value=freq;
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(vol,t+0.01);
+      g.gain.setValueAtTime(vol,t+dur-0.04);
+      g.gain.linearRampToValueAtTime(0,t+dur);
+      o.start(t);o.stop(t+dur+0.01);
+      alarmNodes.push(o);
+    }
+
+    const T=ctx.currentTime+0.05;
+    // 2-bar loop = 8 beats at 128bpm
+
+    // ── BEAT PATTERN (Ishq Jalakar dhol groove) ──
+    // Bar 1
+    for(let bar=0;bar<2;bar++){
+      const B=T+bar*8*BEAT;
+
+      // Kick: beat 1, beat 2.5, beat 3, beat 4 (dum dum da-dum style)
+      kick(B+0*BEAT);
+      kick(B+1.5*BEAT);
+      kick(B+2*BEAT);
+      kick(B+3.5*BEAT);
+
+      // Dhol low on off-beats
+      dhol(B+0.5*BEAT, 0.5);
+      dhol(B+2.5*BEAT, 0.5);
+
+      // Dhol high hits (ti-ka pattern)
+      dholHigh(B+0.25*BEAT);
+      dholHigh(B+0.75*BEAT,0.25);
+      dholHigh(B+1.25*BEAT);
+      dholHigh(B+2.25*BEAT);
+      dholHigh(B+2.75*BEAT,0.25);
+      dholHigh(B+3.25*BEAT);
+
+      // Snare/clap: beat 2 and 4
+      snare(B+1*BEAT);
+      snare(B+3*BEAT);
+      clap(B+1*BEAT+0.01);
+      clap(B+3*BEAT+0.01);
+
+      // 16th note hi-hats
+      for(let i=0;i<16;i++){
+        const vol=(i%4===0)?0.22:(i%2===0)?0.15:0.10;
+        const open=(i===6||i===14);
+        hihat(B+i*S16,vol,open);
+      }
+
+      // ── MELODY HOOK (Ishq Jalakar signature rising phrase) ──
+      // Notes: A4 C5 E5 G5 — typical Bollywood hook melody
+      const A4=440,C5=523.25,E5=659.25,G5=783.99,F5=698.46,D5=587.33;
+      if(bar===0){
+        melnote(A4,  B+0*BEAT,   BEAT*0.9,  0.16);
+        melnote(C5,  B+1*BEAT,   BEAT*0.9,  0.17);
+        melnote(E5,  B+2*BEAT,   BEAT*0.9,  0.17);
+        melnote(G5,  B+3*BEAT,   BEAT*1.8,  0.18);
+      } else {
+        melnote(G5,  B+0*BEAT,   BEAT*0.6,  0.17);
+        melnote(F5,  B+0.75*BEAT,BEAT*0.6,  0.16);
+        melnote(E5,  B+1.5*BEAT, BEAT*0.6,  0.16);
+        melnote(D5,  B+2.25*BEAT,BEAT*0.6,  0.15);
+        melnote(C5,  B+3*BEAT,   BEAT*1.8,  0.18);
+      }
+    }
+
+    // Loop every ~7.5 seconds (2 bars at 128bpm = ~7.5s)
+    alarmLoopTimer=setTimeout(playAlarmSound, 7400);
+  }catch(e){console.warn('Audio failed:',e)}
+}
+function stopAlarmSound(){
+  if(alarmLoopTimer){clearTimeout(alarmLoopTimer);alarmLoopTimer=null}
+  alarmNodes.forEach(o=>{try{o.stop();o.disconnect()}catch(e){}});
+  alarmNodes=[];
+  if(alarmCtx){try{alarmCtx.close()}catch(e){} alarmCtx=null}
+}
+
+function triggerAlarm(ev){
+  if(firedAlarms.has(ev.id))return;
+  firedAlarms.add(ev.id);
+  $('alarm-event-name').textContent=ev.name;
+  $('alarm-sub').textContent=`${fmtDate(ev.date)}${ev.time?' · '+ev.time:''} — This event is happening now!`;
+  $('alarm-overlay').classList.add('show');
+  playAlarmSound();
+  // Browser notification
+  if('Notification' in window&&Notification.permission==='granted'){
+    new Notification('📅 '+ev.name+' is happening now!',{body:'GradeSight Pro · Greenwood High',icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><text y="28" font-size="28">📚</text></svg>'});
+  }
+}
+function snoozeAlarm(){
+  // Re-trigger in 5 minutes
+  const name=$('alarm-event-name').textContent;
+  toast('⏰ Snoozed for 5 minutes','info');
+  dismissAlarm();
+  setTimeout(()=>{
+    playAlarmSound();
+    $('alarm-event-name').textContent=name;
+    $('alarm-sub').textContent='Snoozed reminder — '+name;
+    $('alarm-overlay').classList.add('show');
+  },5*60*1000);
+}
+function dismissAlarm(){
+  $('alarm-overlay').classList.remove('show');
+  stopAlarmSound();
+}
+function testAlarm(){
+  const ev={id:'__test__',name:'Annual Sports Day',date:new Date().toISOString().split('T')[0],time:new Date().toTimeString().slice(0,5)};
+  firedAlarms.delete('__test__');
+  triggerAlarm(ev);
+}
+
+// ══════════════════════════════════════════
+// COUNTDOWN + TODAY EVENTS
+// ══════════════════════════════════════════
+function renderCountdown(){
+  const now=new Date();
+  const todayStr=now.toISOString().split('T')[0];
+
+  // ── Check ALL events for alarm — window: 0 to +60 seconds past event time ──
+  APP.events.forEach(ev=>{
+    if(firedAlarms.has(ev.id))return;
+    const evDate=new Date(ev.date+'T'+(ev.time||'23:59:00'));
+    const diff=evDate-now;
+    // Fire if event is within the past 60 seconds (catches the exact tick)
+    if(diff<=0 && diff>-60000){
+      triggerAlarm(ev);
+    }
+  });
+
+  const upcoming=APP.events.filter(e=>{
+    const ed=new Date(e.date+'T'+(e.time||'23:59:59'));return ed>=now;
+  }).sort((a,b)=>new Date(a.date+'T'+(a.time||'23:59:59'))-new Date(b.date+'T'+(b.time||'23:59:59')));
+
+  const EVENT_COLORS=['#4f8ef7','#7c5cfc','#3ecf8e','#f7924f','#f75f5f','#f7c94f','#38bdf8','#f472b6'];
+
+  // ── Today's events panel (dashboard) ──
+  const todayEl=$('dash-today-events');
+  if(todayEl){
+    const todayEvts=APP.events.filter(e=>e.date===todayStr).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+    if(!todayEvts.length){
+      todayEl.innerHTML=`<span style="font-size:13px;color:var(--text3);font-style:italic">No events today</span>`;
+    } else {
+      todayEl.innerHTML=todayEvts.map((e,i)=>`
+        <div class="today-event-row">
+          <div class="today-event-dot" style="background:${EVENT_COLORS[i%EVENT_COLORS.length]}"></div>
+          <div class="today-event-time">${e.time||'All day'}</div>
+          <div class="today-event-name">${e.name}</div>
+        </div>`).join('');
+    }
+  }
+
+  // ── Dashboard countdown (nearest event) ──
+  const dashEl=$('dash-countdown-content');
+  if(dashEl){
+    if(!upcoming.length){
+      dashEl.innerHTML=`<span style="font-size:13px;color:var(--text3);font-style:italic">No upcoming events</span>`;
+    } else {
+      const ev=upcoming[0];
+      const evDate=new Date(ev.date+'T'+(ev.time||'23:59:59'));
+      const diff=evDate-now;
+      if(diff<=0){
+        dashEl.innerHTML=`<div style="font-size:13px;font-weight:700;color:var(--green)">🎉 Happening Now!</div>`;
+      } else {
+        const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+        dashEl.innerHTML=`
+          <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:var(--text2)">for: <span style="color:var(--text)">${ev.name}</span></div>
+          <div class="countdown-timer">
+            ${d>0?`<div class="countdown-unit"><div class="countdown-val">${String(d).padStart(2,'0')}</div><div class="countdown-label">Days</div></div>`:''}
+            <div class="countdown-unit"><div class="countdown-val">${String(h).padStart(2,'0')}</div><div class="countdown-label">Hrs</div></div>
+            <div class="countdown-unit"><div class="countdown-val">${String(m).padStart(2,'0')}</div><div class="countdown-label">Min</div></div>
+            <div class="countdown-unit"><div class="countdown-val" style="color:var(--accent3)">${String(s).padStart(2,'0')}</div><div class="countdown-label">Sec</div></div>
+          </div>`;
+      }
+    }
+  }
+
+  // ── Calendar page countdowns ──
+  const calCard=$('cal-countdown-card'),calEl=$('cal-countdown-content');
+  if(calCard&&calEl){
+    if(!upcoming.length){calCard.style.display='none';}
+    else{
+      calCard.style.display='block';
+      let html='';
+      upcoming.slice(0,6).forEach((e,i)=>{
+        const ed=new Date(e.date+'T'+(e.time||'23:59:59'));
+        const df=ed-now;
+        if(df<=0){return}
+        const d2=Math.floor(df/86400000),h2=Math.floor((df%86400000)/3600000),m2=Math.floor((df%3600000)/60000),s2=Math.floor((df%60000)/1000);
+        html+=`<div style="display:flex;align-items:center;gap:14px;padding:12px 0;${i>0?'border-top:1px solid var(--border)':''}flex-wrap:wrap">
+          <div style="flex:1;min-width:140px">
+            <div style="font-weight:700;font-size:14px">${e.name}</div>
+            <div style="font-size:12px;color:var(--text2)">${fmtDate(e.date)}${e.time?' · '+e.time:''}</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            ${d2>0?`<div class="countdown-unit" style="min-width:42px;padding:7px 8px"><div class="countdown-val" style="font-size:17px">${String(d2).padStart(2,'0')}</div><div class="countdown-label">Days</div></div>`:''}
+            <div class="countdown-unit" style="min-width:42px;padding:7px 8px"><div class="countdown-val" style="font-size:17px">${String(h2).padStart(2,'0')}</div><div class="countdown-label">Hrs</div></div>
+            <div class="countdown-unit" style="min-width:42px;padding:7px 8px"><div class="countdown-val" style="font-size:17px">${String(m2).padStart(2,'0')}</div><div class="countdown-label">Min</div></div>
+            <div class="countdown-unit" style="min-width:42px;padding:7px 8px"><div class="countdown-val" style="font-size:17px;color:var(--accent3)">${String(s2).padStart(2,'0')}</div><div class="countdown-label">Sec</div></div>
+          </div>
+        </div>`;
+      });
+      calEl.innerHTML=html||'<span style="color:var(--text3);font-size:13px">All caught up!</span>';
+    }
+  }
+}
+
+function showNotification(msg){
+  const nb=document.createElement('div');nb.className='notif-bubble';
+  nb.innerHTML=`<span style="font-size:20px">🔔</span><div><div style="font-weight:600;font-size:14px">Event Reminder</div><div style="font-size:13px;color:var(--text2)">${msg}</div></div>`;
+  nb.onclick=()=>nb.remove();document.body.appendChild(nb);
+  setTimeout(()=>{nb.style.animation='fadeIn 0.3s reverse';setTimeout(()=>nb.remove(),300)},8000);
+}
+
+// ══════════════════════════════════════════
+// OUTLOOK WEEK VIEW
+// ══════════════════════════════════════════
+let calView='month'; // 'month' | 'week'
+let weekOffset=0;   // weeks offset from current week
+
+function setCalView(v){
+  calView=v;
+  $('cal-view-month-btn').style.cssText=v==='month'?'border-color:var(--accent);color:var(--accent)':'';
+  $('cal-view-week-btn').style.cssText=v==='week'?'border-color:var(--accent);color:var(--accent)':'';
+  $('cal-month-view').style.display=v==='month'?'block':'none';
+  $('cal-week-view').style.display=v==='week'?'block':'none';
+  if(v==='week')renderWeekView();
+}
+
+function calNavOutlook(dir){
+  if(calView==='month'){calNav(dir);}
+  else{weekOffset+=dir;renderWeekView();}
+}
+function calGoToday(){weekOffset=0;APP.calMonth=new Date().getMonth();APP.calYear=new Date().getFullYear();renderCalendar();if(calView==='week')renderWeekView();}
+
+const EVENT_PILL_COLORS=[
+  {bg:'rgba(79,142,247,0.85)',text:'#fff'},
+  {bg:'rgba(124,92,252,0.85)',text:'#fff'},
+  {bg:'rgba(247,146,79,0.85)',text:'#fff'},
+  {bg:'rgba(62,207,142,0.85)',text:'#fff'},
+  {bg:'rgba(247,95,95,0.85)',text:'#fff'},
+  {bg:'rgba(247,201,79,0.85)',text:'#0a0b0f'},
+  {bg:'rgba(56,189,248,0.85)',text:'#fff'},
+  {bg:'rgba(244,114,182,0.85)',text:'#fff'},
+];
+
+function renderWeekView(){
+  const now=new Date();
+  // Get start of current week (Sunday) + offset
+  const startOfWeek=new Date(now);
+  startOfWeek.setDate(now.getDate()-now.getDay()+weekOffset*7);
+  startOfWeek.setHours(0,0,0,0);
+
+  // Build 7 days
+  const weekDays=Array.from({length:7},(_,i)=>{
+    const d=new Date(startOfWeek);d.setDate(startOfWeek.getDate()+i);return d;
+  });
+
+  // Update header label
+  const endDay=weekDays[6];
+  $('cal-month-label').textContent=`${MONTHS[startOfWeek.getMonth()]} ${startOfWeek.getDate()} – ${endDay.getDate()}, ${endDay.getFullYear()}`;
+
+  // ── Day header row ──
+  const headersEl=$('outlook-day-headers');
+  headersEl.style.gridTemplateColumns=`64px repeat(7,1fr)`;
+  let hHtml=`<div style="width:64px;border-right:1px solid var(--border);height:52px"></div>`;
+  weekDays.forEach(d=>{
+    const isToday=d.toDateString()===now.toDateString();
+    const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    hHtml+=`<div class="outlook-day-header-cell" style="${isToday?'color:var(--accent)':''}">
+      ${isToday
+        ?`<span class="outlook-day-num is-today">${d.getDate()}</span>`
+        :`<span class="outlook-day-num">${d.getDate()}</span>`}
+      <span class="outlook-day-name${isToday?' is-today':''}">${dayNames[d.getDay()]}</span>
+    </div>`;
+  });
+  headersEl.innerHTML=hHtml;
+
+  // ── Time col ──
+  const timeCol=$('outlook-time-col');
+  let tHtml='<div style="height:24px"></div>'; // offset for half-start
+  for(let h=0;h<24;h++){
+    const label=h===0?'':h<12?`${h} AM`:h===12?'12 PM':`${h-12} PM`;
+    tHtml+=`<div class="outlook-time-label">${label}</div>`;
+  }
+  timeCol.innerHTML=tHtml;
+
+  // ── Day columns ──
+  const daysEl=$('outlook-day-cols');
+  daysEl.style.gridTemplateColumns=`repeat(7,1fr)`;
+  let dHtml='';
+
+  weekDays.forEach((day,di)=>{
+    const dateStr=`${day.getFullYear()}-${String(day.getMonth()+1).padStart(2,'0')}-${String(day.getDate()).padStart(2,'0')}`;
+    const dayEvts=APP.events.filter(e=>e.date===dateStr);
+    const isToday=day.toDateString()===now.toDateString();
+
+    dHtml+=`<div class="outlook-day-col${isToday?' today-col':''}" style="min-height:1152px;position:relative">`;
+    // Hour lines
+    for(let h=0;h<24;h++){
+      dHtml+=`<div class="outlook-hour-row" style="top:${h*48}px;position:absolute;width:100%;left:0"><div class="outlook-half-mark"></div></div>`;
+    }
+    // Now indicator
+    if(isToday){
+      const mins=now.getHours()*60+now.getMinutes();
+      const top=(mins/60)*48;
+      dHtml+=`<div class="outlook-now-bar" style="top:${top}px"><div class="outlook-now-bar-line"></div></div>`;
+    }
+    // Events as pills
+    dayEvts.forEach((ev,ei)=>{
+      const c=EVENT_PILL_COLORS[ei%EVENT_PILL_COLORS.length];
+      let topPx=0,heightPx=48;
+      if(ev.time){
+        const [hh,mm]=ev.time.split(':').map(Number);
+        topPx=((hh*60+mm)/60)*48;
+        heightPx=Math.max(48,48); // default 1hr
+      } else {
+        topPx=4;heightPx=36;
+      }
+      dHtml+=`<div class="outlook-event-pill" style="top:${topPx}px;height:${heightPx}px;background:${c.bg};color:${c.text}" onclick="showDayEvents('${dateStr}',${day.getDate()})">
+        <div class="ep-title">${ev.name}</div>
+        <div class="ep-time">${ev.time||'All day'}${ev.notes?' · '+ev.notes.substring(0,20):''}</div>
+      </div>`;
+    });
+    dHtml+='</div>';
+  });
+  daysEl.innerHTML=dHtml;
+
+  // Scroll to 7am
+  const scrollArea=$('outlook-scroll-area');
+  if(scrollArea)scrollArea.scrollTop=7*48;
+}
+
+function updateTopScorers(){
+  const el=$('top-scorers-summary');
+  const exams=['ut1','term1','ut2','term2'];let html='';
+  exams.forEach(ex=>{
+    const eMarks=APP.marks[ex];if(!eMarks||!Object.keys(eMarks).length)return;
+    const max=EXAM_TYPES[ex].max;
+    const classMap={};
+    APP.students.forEach(st=>{const key=st.grade+st.section;if(!classMap[key])classMap[key]={class:key,students:[]};classMap[key].students.push(st)});
+    Object.keys(classMap).forEach(cls=>{
+      const sts=classMap[cls].students;
+      let top=null,topPct=-1;
+      sts.forEach(st=>{
+        const stMarks=eMarks[st.id];if(!stMarks)return;
+        const vals=Object.values(stMarks).filter(v=>v!==''&&v!==undefined);
+        if(!vals.length)return;
+        const total=vals.reduce((a,b)=>a+(+b||0),0);
+        const pct=max?(total/(vals.length*max)*100):0;
+        if(pct>topPct){topPct=pct;top=st}
+      });
+      if(top&&topPct>=0){
+        html+=`<div class="card2" style="display:inline-flex;align-items:center;gap:10px;margin:4px;flex-shrink:0">
+          <span style="font-size:18px">🏆</span>
+          <div><div style="font-size:13px;font-weight:600">${top.name}</div>
+          <div style="font-size:11px;color:var(--text3)">${EXAM_TYPES[ex].label} · Class ${cls} · ${topPct.toFixed(1)}%</div></div></div>`;
+      }
+    });
+  });
+  el.innerHTML=html||`<div class="empty-state" style="padding:24px"><p style="font-size:13px">Add students and enter marks to see top scorers</p></div>`;
+  if(html)el.style.cssText='display:flex;flex-wrap:wrap;gap:6px;';
+}
+
+// ══════════════════════════════════════════
+// TIMETABLE
+// ══════════════════════════════════════════
+let ttDragData=null;
+
+function getColorForBlock(label,idx){
+  // Try to match teacher subjects first
+  const t=APP.teacher;
+  const si=t?t.subjects.indexOf(label):-1;
+  return BLOCK_COLORS[si>=0?si%BLOCK_COLORS.length:idx%BLOCK_COLORS.length];
+}
+
+function buildTimetable(){
+  const periods=parseInt($('tt-periods').value)||8;
+  const area=$('tt-builder-area');
+  APP.timetableInProgress={};
+  DAYS.forEach(d=>{APP.timetableInProgress[d]={}});
+
+  const t=APP.teacher;
+  // Build palette
+  let paletteHTML=`<div class="card" style="margin-bottom:16px">
+    <div class="section-title" style="font-size:14px;margin-bottom:12px">Block Palette — Drag onto grid and double click on a block to remove it from the timetable.</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">`;
+  t.subjects.forEach((s,i)=>{
+    const c=BLOCK_COLORS[i%BLOCK_COLORS.length];
+    paletteHTML+=`<div class="tt-palette-item" draggable="true"
+      data-label="${s}" data-coloridx="${i}"
+      style="background:${c.bg};color:${c.fg};border:2px solid ${c.border}"
+      ondragstart="ttDragStart(event)">${s}</div>`;
+  });
+  EXTRA_BLOCKS.forEach((b,i)=>{
+    const c=BLOCK_COLORS[b.color];
+    paletteHTML+=`<div class="tt-palette-item" draggable="true"
+      data-label="${b.label}" data-coloridx="${b.color}"
+      style="background:${c.bg};color:${c.fg};border:2px solid ${c.border}"
+      ondragstart="ttDragStart(event)">${b.label}</div>`;
+  });
+  paletteHTML+=`</div></div>`;
+
+  // Build grid
+  let gridHTML=`<div class="timetable-builder"><table class="tt-grid-table"><thead><tr>
+    <th class="tt-day-th">Day</th>
+    ${Array.from({length:periods},(_,i)=>`<th>P${i+1}</th>`).join('')}
+  </tr></thead><tbody>`;
+  DAYS.forEach(day=>{
+    gridHTML+=`<tr><th class="tt-day-th">${day.slice(0,3)}</th>`;
+    for(let pi=0;pi<periods;pi++){
+      gridHTML+=`<td>
+        <div class="tt-drop-zone" id="cell-${day}-${pi}"
+          ondragover="ttDragOver(event)"
+          ondrop="ttDrop(event,'${day}',${pi})"
+          ondragleave="ttDragLeave(event)">
+          <div id="block-${day}-${pi}" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center"></div>
+        </div>
+      </td>`;
+    }
+    gridHTML+=`</tr>`;
+  });
+  gridHTML+=`</tbody></table></div>`;
+
+  area.innerHTML=paletteHTML+gridHTML;
+  $('btn-finish-tt').style.display='flex';
+}
+
+function ttDragStart(e){
+  ttDragData={label:e.target.dataset.label,colorIdx:parseInt(e.target.dataset.coloridx)||0};
+  e.dataTransfer.effectAllowed='copy';
+}
+function ttDragOver(e){e.preventDefault();e.currentTarget.classList.add('drag-over')}
+function ttDragLeave(e){e.currentTarget.classList.remove('drag-over')}
+function ttDrop(e,day,period){
+  e.preventDefault();e.currentTarget.classList.remove('drag-over');
+  if(!ttDragData)return;
+  placeBlock(day,period,ttDragData);
+}
+function placeBlock(day,period,data){
+  APP.timetableInProgress[day][period]=data;
+  const el=$(`block-${day}-${period}`);if(!el)return;
+  const c=BLOCK_COLORS[data.colorIdx||0];
+  el.innerHTML=`<div class="tt-block-in-cell"
+    style="background:${c.bg};color:${c.fg};border:none;width:100%;height:100%"
+    draggable="true"
+    data-label="${data.label}" data-coloridx="${data.colorIdx||0}"
+    ondragstart="ttBlockDragStart(event)"
+    ondblclick="removeBlock('${day}',${period})">
+    ${data.label}<br><span style="font-size:9px;opacity:0.5">F</span>
+  </div>`;
+  // Also color the TD itself
+  const td=el.closest('td');
+  if(td){td.style.background=c.bg+'99'} // subtle bg on whole cell
+}
+function ttBlockDragStart(e){
+  ttDragData={label:e.target.dataset.label,colorIdx:parseInt(e.target.dataset.coloridx)||0};
+  e.dataTransfer.effectAllowed='move';
+}
+function removeBlock(day,period){
+  delete APP.timetableInProgress[day][period];
+  const el=$(`block-${day}-${period}`);if(el)el.innerHTML='';
+  const td=el?el.closest('td'):null;if(td)td.style.background='';
+}
+function finishTimetable(){
+  const periods=parseInt($('tt-periods').value)||8;
+  const subjects=[...new Set(Object.values(APP.timetableInProgress).flatMap(d=>Object.values(d).filter(b=>b.label).map(b=>b.label)))];
+  APP.timetable={periods,days:JSON.parse(JSON.stringify(APP.timetableInProgress)),subjects};
+  save();
+  showSavedTimetable();
+  $('tt-content').style.display='none';$('tt-saved-view').style.display='block';$('btn-finish-tt').style.display='none';
+  updateTimetableWidget();
+  toast('Timetable saved!','success');
+}
+function showSavedTimetable(){
+  if(!APP.timetable)return;
+  $('tt-content').style.display='none';$('tt-saved-view').style.display='block';
+  const{periods,days}=APP.timetable;
+  let html=`<div class="timetable-builder"><table class="tt-grid-table"><thead><tr>
+    <th class="tt-day-th">Day</th>
+    ${Array.from({length:periods},(_,i)=>`<th>P${i+1}</th>`).join('')}
+  </tr></thead><tbody>`;
+  DAYS.forEach(day=>{
+    html+=`<tr><th class="tt-day-th">${day}</th>`;
+    for(let pi=0;pi<periods;pi++){
+      const block=(days[day]||{})[pi];
+      if(block){
+        const c=BLOCK_COLORS[block.colorIdx||0];
+        html+=`<td style="background:${c.bg}99"><div class="tt-view-block" style="background:${c.bg};color:${c.fg};border:1px solid ${c.border}">${block.label}</div></td>`;
+      } else {
+        html+=`<td><div style="font-size:11px;color:var(--text3);text-align:center">—</div></td>`;
+      }
+    }
+    html+=`</tr>`;
+  });
+  html+=`</tbody></table></div>`;
+  $('tt-display').innerHTML=html;
+}
+function editTimetable(){
+  $('tt-content').style.display='block';$('tt-saved-view').style.display='none';
+  if(APP.timetable){
+    $('tt-periods').value=APP.timetable.periods;
+    buildTimetable();
+    DAYS.forEach(day=>{
+      Object.keys(APP.timetable.days[day]||{}).forEach(pi=>{
+        placeBlock(day,parseInt(pi),APP.timetable.days[day][pi]);
+      });
+    });
+  }
+}
+
+// ══════════════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════════════
+let eventsOpen=false;
+function toggleEventsPanel(){
+  eventsOpen=!eventsOpen;
+  const body=$('events-collapse-body'),btn=$('events-toggle-btn');
+  body.classList.toggle('open',eventsOpen);
+  btn.textContent=eventsOpen?'▲ Collapse':'▼ Expand';
+  if(eventsOpen)renderAllEvents();
+}
+function renderCalendar(){
+  $('cal-month-label').textContent=`${MONTHS[APP.calMonth]} ${APP.calYear}`;
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  $('cal-dow-header').innerHTML=days.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
+  const grid=$('cal-grid');
+  const first=new Date(APP.calYear,APP.calMonth,1).getDay();
+  const daysInMonth=new Date(APP.calYear,APP.calMonth+1,0).getDate();
+  const prevDays=new Date(APP.calYear,APP.calMonth,0).getDate();
+  const today=new Date();
+  let html='';
+  for(let i=0;i<first;i++){const d=prevDays-first+1+i;html+=`<div class="cal-day other-month"><span class="cal-day-num">${d}</span></div>`}
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${APP.calYear}-${String(APP.calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=today.getDate()===d&&today.getMonth()===APP.calMonth&&today.getFullYear()===APP.calYear;
+    const hasEv=APP.events.some(e=>e.date===dateStr);
+    html+=`<div class="cal-day${isToday?' today':''}${hasEv?' has-events':''}" onclick="showDayEvents('${dateStr}',${d})"><span class="cal-day-num">${d}</span></div>`;
+  }
+  const remaining=42-(first+daysInMonth);
+  for(let d=1;d<=remaining;d++)html+=`<div class="cal-day other-month"><span class="cal-day-num">${d}</span></div>`;
+  grid.innerHTML=html;
+  // Update count badge
+  $('events-count').textContent=APP.events.length?`(${APP.events.length})`:'';
+  if(eventsOpen)renderAllEvents();
+}
+function calNav(dir){
+  APP.calMonth+=dir;
+  if(APP.calMonth>11){APP.calMonth=0;APP.calYear++}
+  if(APP.calMonth<0){APP.calMonth=11;APP.calYear--}
+  renderCalendar();
+}
+function showDayEvents(dateStr,day){
+  APP.selectedCalDay=dateStr;
+  const evs=APP.events.filter(e=>e.date===dateStr);
+  const d=new Date(dateStr);
+  $('day-events-title').textContent=`${DAYS[d.getDay()]}, ${fmtDate(dateStr)}`;
+  const list=$('day-events-list');
+  if(!evs.length){
+    list.innerHTML=`<div class="empty-state" style="padding:16px"><p>No events on this day</p></div>`;
+  } else {
+    list.innerHTML=evs.map(e=>`<div class="card2" style="margin-bottom:8px;display:flex;align-items:flex-start;justify-content:space-between">
+      <div><div style="font-weight:600;font-size:14px">${e.name}</div>
+      ${e.time?`<div style="font-size:12px;color:var(--text2)">${e.time}</div>`:''}
+      ${e.notes?`<div style="font-size:12px;color:var(--text3);margin-top:4px">${e.notes}</div>`:''}</div>
+      <button class="btn btn-ghost btn-sm" onclick="deleteEvent('${e.id}')">✕</button>
+    </div>`).join('');
+  }
+  openModal('modal-day-events');
+}
+function openAddEvent(){
+  const today=new Date().toISOString().split('T')[0];
+  $('ev-date').value=today;$('ev-name').value='';$('ev-time').value='';$('ev-notes').value='';
+  openModal('modal-add-event');
+}
+function openAddEventFromDay(){
+  closeModal('modal-day-events');
+  $('ev-date').value=APP.selectedCalDay||new Date().toISOString().split('T')[0];
+  $('ev-name').value='';$('ev-time').value='';$('ev-notes').value='';
+  openModal('modal-add-event');
+}
+function saveEvent(){
+  const name=$('ev-name').value.trim(),date=$('ev-date').value;
+  if(!name){toast('Event name is required','error');return}
+  if(!date){toast('Date is required','error');return}
+  APP.events.push({id:uid(),name,date,time:$('ev-time').value,notes:$('ev-notes').value.trim()});
+  save();closeModal('modal-add-event');renderCalendar();updateDashboard();startCountdown();
+  toast('Event added!','success');
+}
+function deleteEvent(id){
+  APP.events=APP.events.filter(e=>e.id!==id);save();
+  closeModal('modal-day-events');renderCalendar();updateDashboard();startCountdown();
+  toast('Event deleted','info');
+}
+function renderAllEvents(){
+  const el=$('all-events-list');
+  const sorted=[...APP.events].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  if(!sorted.length){el.innerHTML=`<div class="empty-state" style="padding:20px"><p>No events added yet</p></div>`;return}
+  el.innerHTML=sorted.map(e=>{
+    const now=new Date(),evD=new Date(e.date);const isPast=evD<now;
+    return`<div class="card2" style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;opacity:${isPast?0.5:1}">
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <div style="font-size:20px">${isPast?'✓':'📅'}</div>
+        <div><div style="font-weight:600;font-size:14px">${e.name}</div>
+        <div style="font-size:12px;color:var(--text2)">${fmtDate(e.date)}${e.time?' · '+e.time:''}</div>
+        ${e.notes?`<div style="font-size:12px;color:var(--text3)">${e.notes}</div>`:''}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="deleteEvent('${e.id}')">✕</button>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// STUDENTS
+// ══════════════════════════════════════════
+function renderStudentSection(){
+  const tab=APP.currentExamTab||'general';
+  if(tab==='general')renderGeneralTab();
+  else renderExamTab(tab);
+}
+function switchExamTab(tab,el){
+  document.querySelectorAll('#exam-tabs .tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  APP.currentExamTab=tab;
+  if(tab==='general')renderGeneralTab();
+  else renderExamTab(tab);
+}
+function renderGeneralTab(){
+  const t=APP.teacher;
+  const allClasses=[];
+  GRADES.forEach(g=>SECTIONS.forEach(s=>allClasses.push({g,s,key:g+s})));
+  if(!APP.currentStudentClass&&t.classSection)APP.currentStudentClass=t.classSection.replace(/\s/g,'');
+  const selClass=APP.currentStudentClass||'';
+  const classStudents=APP.students.filter(s=>s.grade+s.section===selClass);
+  const isClassTeacher=t.classSection&&selClass===t.classSection.replace(/\s/g,'');
+  let classOpts=allClasses.map(c=>`<option value="${c.key}" ${APP.currentStudentClass===c.key?'selected':''}>${c.g}${c.s}${c.key===t.classSection?` 👑`:''}</option>`).join('');
+  const html=`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+      <div class="input-group" style="margin:0;flex:1;min-width:160px">
+        <label class="label">Select Class</label>
+        <select class="input" id="sel-class" onchange="selectClass(this.value)" style="max-width:180px">
+          <option value="">-- Select --</option>${classOpts}
+        </select>
+      </div>
+      <div class="input-group" style="margin:0;flex:1;min-width:160px">
+        <label class="label">Subject</label>
+        <select class="input" id="sel-subject" style="max-width:200px">
+          ${t.subjects.map(s=>`<option>${s}</option>`).join('')}
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="openAddStudentModal()" style="margin-top:18px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Student
+      </button>
+    </div>
+    ${isClassTeacher?`<div class="crown-note">👑 This is your class section — you can enter marks for all subjects</div>`:''}
+    <div id="student-list-container">
+      ${selClass?renderStudentList(classStudents,selClass):`<div class="empty-state"><p>Select a class to view students</p></div>`}
+    </div>`;
+  $('exam-content').innerHTML=html;
+  if(selClass)$('sel-class').value=selClass;
+}
+function selectClass(val,skipRender){
+  APP.currentStudentClass=val;if(!skipRender)renderStudentSection();
+}
+function renderStudentList(students,classKey){
+  if(!students.length)return`<div class="empty-state" style="padding:24px">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px;height:40px;margin:0 auto 10px"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    <h3>No students yet</h3><p>Click "+ Add Student" to add students to this class</p></div>`;
+  return`<div class="student-table-wrap"><table class="marks-table">
+    <thead><tr><th>Roll</th><th>Name</th><th>Class</th><th>Actions</th></tr></thead>
+    <tbody>${students.sort((a,b)=>a.roll-b.roll).map(s=>`<tr>
+      <td><span class="badge">${s.roll}</span></td>
+      <td style="font-weight:500">${s.name}</td>
+      <td>${s.grade}${s.section}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="deleteStudent('${s.id}')">Remove</button></td>
+    </tr>`).join('')}</tbody></table></div>`;
+}
+function openAddStudentModal(){
+  const t=APP.teacher;const selClass=APP.currentStudentClass||'';
+  const grade=selClass.slice(0,-1)||'';const section=selClass.slice(-1)||'';
+  $('st-name').value='';
+  $('st-roll').value=APP.students.filter(s=>s.grade+s.section===selClass).length+1;
+  $('st-grade').value=grade;$('st-section').value=section;
+  openModal('modal-add-student');
+  setTimeout(()=>$('st-name').focus(),300);
+  $('modal-add-student').onkeydown=e=>{
+    if(e.key==='Enter')saveStudent();
+    if(e.key==='Tab'&&!e.shiftKey&&document.activeElement===$('st-roll')){e.preventDefault();saveStudentAndNext()}
+  };
+}
+function saveStudent(){
+  const name=$('st-name').value.trim(),roll=$('st-roll').value,grade=$('st-grade').value,section=$('st-section').value;
+  if(!name){toast('Student name required','error');return}
+  if(!grade||!section){toast('Select class and section','error');return}
+  APP.students.push({id:uid(),name,roll:parseInt(roll)||APP.students.length+1,grade,section});
+  save();closeModal('modal-add-student');renderStudentSection();updateDashboard();
+  toast(`${name} added!`,'success');
+}
+function saveStudentAndNext(){
+  const name=$('st-name').value.trim(),roll=$('st-roll').value,grade=$('st-grade').value,section=$('st-section').value;
+  if(!name){toast('Student name required','error');return}
+  if(!grade||!section){toast('Select class and section','error');return}
+  APP.students.push({id:uid(),name,roll:parseInt(roll)||APP.students.length+1,grade,section});
+  save();updateDashboard();
+  $('st-name').value='';
+  $('st-roll').value=APP.students.filter(s=>s.grade+s.section===grade+section).length+1;
+  $('st-name').focus();toast(`${name} added! Add another.`,'success');
+}
+function deleteStudent(id){
+  APP.students=APP.students.filter(s=>s.id!==id);save();renderStudentSection();updateDashboard();
+  toast('Student removed','info');
+}
+
+// ── EXAM TABS ──
+function renderExamTab(examKey){
+  const t=APP.teacher;const exam=EXAM_TYPES[examKey];const selClass=APP.currentStudentClass||'';
+  const allClasses=[...new Set(APP.students.map(s=>s.grade+s.section))].sort();
+  const isClassTeacher=!!t.classSection;
+  const canEditAll=isClassTeacher&&selClass===t.classSection.replace(/\s/g,'');
+  const subjectsToShow=canEditAll?['Mathematics','Science','Social','English','Telugu','Hindi','Computer',...t.subjects].filter((v,i,a)=>a.indexOf(v)===i):t.subjects;
+  const classStudents=selClass?APP.students.filter(s=>s.grade+s.section===selClass).sort((a,b)=>a.roll-b.roll):[];
+  let classOpts=`<option value="">-- Select Class --</option>`+allClasses.map(c=>`<option value="${c}" ${c===selClass?'selected':''}>${c}${t.classSection&&c===t.classSection.replace(/\s/g,'')?` 👑`:''}</option>`).join('');
+  if(!APP.marks[examKey])APP.marks[examKey]={};
+
+  let tableHTML='';
+  if(classStudents.length&&selClass){
+    // Build stats: % based on filled subjects only, topper by highest %
+    const stats=classStudents.map(st=>{
+      const stMarks=APP.marks[examKey][st.id]||{};
+      const filledSubjs=subjectsToShow.filter(s=>stMarks[s]!==undefined&&stMarks[s]!=='');
+      const total=filledSubjs.reduce((sum,s)=>sum+(+stMarks[s]||0),0);
+      const maxTotal=exam.max?filledSubjs.length*exam.max:null;
+      const pct=(maxTotal&&maxTotal>0)?(total/maxTotal*100):null;
+      return{st,total,pct,stMarks,filledCount:filledSubjs.length};
+    });
+
+    // Topper: only students with marks entered, by highest %
+    const withMarks=stats.filter(r=>r.filledCount>0&&r.pct!==null);
+    let topperLine='Add scores to students to find the highest';
+    if(withMarks.length){
+      const topper=withMarks.reduce((best,cur)=>cur.pct>best.pct?cur:best);
+      topperLine=`🏆 ${topper.st.name} — ${topper.pct.toFixed(1)}%`;
+    }
+    const avgPct=withMarks.length?(withMarks.reduce((s,r)=>s+r.pct,0)/withMarks.length).toFixed(1):null;
+
+    // Table: NO rank column, NO medal column, NO percentile column
+    tableHTML=`<div class="student-table-wrap"><table class="marks-table">
+      <thead><tr>
+        <th>Roll</th><th>Name</th>
+        ${subjectsToShow.map(s=>`<th>${s}<br><span style="font-weight:400;color:var(--text3)">/${exam.max}</span></th>`).join('')}
+        <th>Total</th><th>%</th>
+      </tr></thead>
+      <tbody>
+        ${stats.map(({st,total,pct,stMarks,filledCount})=>{
+          const pctClass=pct===null?'':pct>=75?'pct-badge pct-high':pct>=50?'pct-badge pct-mid':'pct-badge pct-low';
+          return`<tr>
+            <td>${st.roll}</td>
+            <td style="font-weight:500;white-space:nowrap">${st.name}</td>
+            ${subjectsToShow.map(sub=>`<td><input class="marks-input" type="number" min="0" max="${exam.max}"
+              value="${stMarks[sub]!==undefined?stMarks[sub]:''}"
+              onchange="updateMark('${examKey}','${st.id}','${sub}',this.value)"
+              onblur="updateMark('${examKey}','${st.id}','${sub}',this.value)"
+              placeholder="—"></td>`).join('')}
+            <td style="font-weight:700;font-family:var(--font-mono)">${filledCount>0?total:'—'}</td>
+            <td>${pct!==null?`<span class="${pctClass}">${pct.toFixed(1)}%</span>`:'—'}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table></div>
+    <div style="margin-top:14px;padding:14px;background:var(--bg3);border-radius:var(--radius2);display:flex;gap:16px;flex-wrap:wrap">
+      <div><span style="font-size:12px;color:var(--text3)">Class Topper</span><br><span style="font-weight:700;font-size:14px">${topperLine}</span></div>
+      ${avgPct!==null?`<div><span style="font-size:12px;color:var(--text3)">Class Average</span><br><span style="font-weight:700;font-size:14px">${avgPct}%</span></div>`:''}
+      <div><span style="font-size:12px;color:var(--text3)">Students</span><br><span style="font-weight:700;font-size:14px">${stats.length}</span></div>
+    </div>`;
+  }
+
+  $('exam-content').innerHTML=`
+    <div style="margin-bottom:16px">
+      <div class="crown-note" style="display:inline-flex;margin-bottom:12px">
+        <span>📊</span><span>${exam.label} — Max marks per subject: ${exam.max}</span>
+      </div>
+      ${isClassTeacher?`<div class="crown-note">👑 Class Teacher Mode — You can enter marks for all subjects</div>`:''}
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+      <div class="input-group" style="margin:0;flex:1;min-width:160px">
+        <label class="label">Select Class</label>
+        <select class="input" id="exam-sel-class" onchange="selectClassExam(this.value)" style="max-width:180px">${classOpts}</select>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="calculatePercentages('${examKey}')" style="margin-bottom:2px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>Calculate %
+      </button>
+    </div>
+    ${selClass&&classStudents.length?tableHTML:selClass?
+      `<div class="empty-state"><p>No students in ${selClass}. Add students in General tab.</p></div>`:
+      `<div class="empty-state"><p>Select a class to enter marks</p></div>`}`;
+  if(selClass)$('exam-sel-class').value=selClass;
+}
+function selectClassExam(val){APP.currentStudentClass=val;renderExamTab(APP.currentExamTab)}
+function calculatePercentages(examKey){renderExamTab(examKey);toast('Percentages calculated! ✅','success')}
+function updateMark(examKey,studentId,subject,value){
+  if(!APP.marks[examKey])APP.marks[examKey]={};
+  if(!APP.marks[examKey][studentId])APP.marks[examKey][studentId]={};
+  APP.marks[examKey][studentId][subject]=value===''?'':parseFloat(value)||0;
+  save();updateTopScorers();
+}
+
+// ══════════════════════════════════════════
+// CALCULATOR
+// ══════════════════════════════════════════
+function switchCalcTab(tab,el){
+  document.querySelectorAll('.calc-section').forEach(s=>s.style.display='none');
+  document.querySelectorAll('#section-calculator .tabs .tab').forEach(t=>t.classList.remove('active'));
+  $('calc-'+tab).style.display='block';if(el)el.classList.add('active');
+}
+let calcStr='',calcNewNum=true;
+function calcNum(n){if(calcNewNum){calcStr=n;calcNewNum=false}else calcStr+=n;$('calc-result').textContent=calcStr}
+function calcOp(op){calcStr+=op;$('calc-result').textContent=calcStr;calcNewNum=false}
+function calcDot(){const parts=calcStr.split(/[\+\-\*\/\(\)]/);const last=parts[parts.length-1];if(!last.includes('.')){calcStr+='.';$('calc-result').textContent=calcStr}}
+function calcPlusMinus(){if(!calcStr)return;if(calcStr.startsWith('-'))calcStr=calcStr.slice(1);else calcStr='-'+calcStr;$('calc-result').textContent=calcStr}
+function calcClear(){calcStr='';$('calc-result').textContent='0';$('calc-expr').textContent='';calcNewNum=true}
+function calcBackspace(){calcStr=calcStr.slice(0,-1);$('calc-result').textContent=calcStr||'0'}
+function calcEquals(){
+  try{
+    $('calc-expr').textContent=calcStr+'=';
+    const res=Function('"use strict";return('+calcStr.replace(/÷/g,'/').replace(/×/g,'*')+')')();
+    calcStr=String(parseFloat(res.toFixed(10)));$('calc-result').textContent=calcStr;calcNewNum=true;
+  }catch(e){$('calc-result').textContent='Error';calcStr='';calcNewNum=true}
+}
+function calcFn(fn){
+  try{const n=parseFloat(calcStr)||0;let r;
+    if(fn==='sqrt')r=Math.sqrt(n);else if(fn==='sq')r=n*n;else if(fn==='1/x')r=1/n;
+    $('calc-expr').textContent=fn+'('+n+')=';calcStr=String(parseFloat(r.toFixed(10)));$('calc-result').textContent=calcStr;calcNewNum=true;
+  }catch(e){$('calc-result').textContent='Error'}
+}
+function calcScore(){
+  const type=$('sc-type').value,obtained=parseFloat($('sc-obtained').value);
+  let max=type==='ut'?25:type==='term'?80:parseFloat($('sc-max').value);
+  if(isNaN(obtained)||isNaN(max)){toast('Enter valid numbers','error');return}
+  const pct=(obtained/max*100).toFixed(2);
+  const grade=pct>=90?'A+':pct>=80?'A':pct>=70?'B+':pct>=60?'B':pct>=50?'C':pct>=33?'D':'F';
+  const colors={'A+':'var(--green)','A':'var(--green)','B+':'var(--accent)','B':'var(--accent)','C':'var(--yellow)','D':'var(--accent3)','F':'var(--red)'};
+  $('sc-result').innerHTML=`<div class="card2" style="text-align:center">
+    <div style="font-size:48px;font-weight:800;color:${colors[grade]}">${grade}</div>
+    <div style="font-size:24px;font-weight:700;margin:8px 0">${pct}%</div>
+    <div style="font-size:14px;color:var(--text2)">${obtained} out of ${max}</div>
+    <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:${Math.min(pct,100)}%"></div></div>
+  </div>`;
+}
+function calcPercentile(){
+  const score=parseFloat($('pc-score').value),total=parseFloat($('pc-total').value),below=parseFloat($('pc-below').value);
+  if(isNaN(score)||isNaN(total)||isNaN(below)){toast('Enter all values','error');return}
+  const percentile=((below/total)*100).toFixed(2);
+  $('pc-result').innerHTML=`<div class="card2" style="text-align:center">
+    <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Percentile Score</div>
+    <div style="font-size:48px;font-weight:800;color:var(--accent)">${percentile}</div>
+    <div style="font-size:14px;color:var(--text2)">${percentile}th percentile</div>
+    <div style="font-size:13px;color:var(--text3);margin-top:8px">Score ${score} is better than ${below} out of ${total} students</div>
+  </div>`;
+}
+document.getElementById('sc-type').addEventListener('change',function(){
+  $('sc-max-group').style.display=this.value==='custom'?'flex':'none';
+});
+
+// ══════════════════════════════════════════
+// SETUP & BOOT
+// ══════════════════════════════════════════
+regSetupTags('reg-subjects-input',regSubjects,'reg-subjects-wrap');
+regSetupTags('reg-sections-input',regSections,'reg-sections-wrap');
+
+document.querySelectorAll('.modal-overlay').forEach(overlay=>{
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open')});
+});
+document.getElementById('reg-modal-overlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('reg-modal-overlay'))document.getElementById('reg-modal-overlay').classList.remove('open');
+});
+
+load();
+if(APP.teacher){showPage('page-main');initMain();}
+
+document.addEventListener('keydown',e=>{
+  if($('section-calculator').classList.contains('active')&&$('calc-math').style.display!=='none'){
+    if(e.key>='0'&&e.key<='9')calcNum(e.key);
+    else if(e.key==='+')calcOp('+');
+    else if(e.key==='-')calcOp('-');
+    else if(e.key==='*')calcOp('*');
+    else if(e.key==='/')e.preventDefault(),calcOp('/');
+    else if(e.key==='.')calcDot();
+    else if(e.key==='Enter'||e.key==='=')calcEquals();
+    else if(e.key==='Backspace')calcBackspace();
+    else if(e.key==='Escape')calcClear();
+  }
+});
+if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();
+</script>
+</body>
+</html>
